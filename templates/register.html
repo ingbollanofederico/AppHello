@@ -1,0 +1,62 @@
+{% extends 'layout.html' %}
+
+
+
+
+
+{% block content %}
+        <!-- Contact Form -->
+    <!-- In order to set the email address and subject line for the contact form go to the bin/contact_me.php file. -->
+    <div class="row">
+      <div class="col-lg-8 mb-4">
+        <h3>Register Form</h3>
+        <h3>{{name}}</h3>
+        <form method="post" >
+          <div class="control-group form-group">
+            <div class="controls">
+              {{ regiterForm.name.label  }}
+                {{ regiterForm.name(class='form-control')  }}
+                {% for error in regiterForm.name.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor  %}
+                <p class="help-block"></p>
+            </div>
+          </div>
+          <div class="control-group form-group">
+            <div class="controls">
+               {{ regiterForm.familyname.label  }}
+                {{ regiterForm.familyname(class='form-control')  }}
+                {% for error in regiterForm.familyname.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor  %}
+            </div>
+          </div>
+          <div class="control-group form-group">
+            <div class="controls">
+              {{ regiterForm.email.label  }}
+                {{ regiterForm.email(class='form-control') }}
+                {% for error in regiterForm.email.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor  %}
+            </div>
+          </div>
+          <div class="control-group form-group">
+            <div class="controls">
+                 {{ regiterForm.password.label }}
+                {{ regiterForm.password(class='form-control') }}
+                {% for error in regiterForm.password.errors %}
+                    <div class="alert alert-danger">{{ error }}</div>
+                {% endfor  %}
+            </div>
+          </div>
+          <div id="success"></div>
+          <!-- For success/fail messages -->
+        {{ regiterForm.submit(class='btn btn-primary') }}
+            {{ regiterForm.hidden_tag() }}
+        </form>
+      </div>
+
+    </div>
+    <!-- /.row -->
+
+{% endblock content %}

@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+        <!-- Contact Form -->
+    <!-- In order to set the email address and subject line for the contact form go to the bin/contact_me.php file. -->
+
+
+    <div class="row">
+      <div class="col-lg-8 mb-4">
+        <h3>Login</h3>
+        <form method="post" >
+          <div class="control-group form-group">
+            <div class="controls">
+                {{ login_form.username.label  }}
+                 {{ login_form.username(class='form-control') }}
+
+              {% for error in login_form.username.errors %}
+                <div class="alert alert-danger" role="alert">
+
+                  {{ error }}
+                </div>
+                {% endfor  %}
+
+            </div>
+          </div>
+         <div class="control-group form-group">
+            <div class="controls">
+              {{ login_form.password.label  }}
+                {{ login_form.password(class='form-control') }}
+                 {% for error in login_form.password.errors %}
+                <p class="alert alert-danger" role="alert">
+
+                  {{ error }}
+              </p>
+                {% endfor  %}
+            </div>
+          </div>
+         <!-- For success/fail messages -->
+        {{ login_form.hidden_tag() }}
+            {{ login_form.submit(class='btn btn-primary') }}
+        </form>
+      </div>
+    </div>
+    <!-- /.row -->
+{% endblock content %}
