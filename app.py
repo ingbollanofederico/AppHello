@@ -11,6 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///website.db'
 db=SQLAlchemy(app)
 bcrypt=Bcrypt(app)
 #prova push github
+
+#prova push back
 from model import User,Role
 from form import formRegisteration,loginForm
 
