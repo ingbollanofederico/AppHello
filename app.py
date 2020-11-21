@@ -15,6 +15,8 @@ bcrypt=Bcrypt(app)
 #prova push back
 
 #pushpushback mat
+
+#pushpushpushpush fed
 from model import User,Role
 from form import formRegisteration,loginForm
 
