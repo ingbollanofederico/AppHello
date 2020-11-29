@@ -1,10 +1,40 @@
-# Information System 2020/2021
-# Flask Lab Exercise #01
+#import
 from flask import Flask,render_template,redirect,url_for,session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+
+@app.route('/')
+def landing():
+    return render_template('landingPage.html')
+
+@app.route('/homePage')
+def homePage():
+    return render_template('homePage.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
+if __name__ == '__main__':
+    app.run()
+
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+######### old
 app.config['SECRET_KEY']='sssdhgclshfsh;shd;jshjhsjhjhsjldchljk'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///website.db'
 
@@ -71,7 +101,7 @@ def student_html_page(name_id):
     else:
         student_name='Guest'
 
-    return render_template('page.html',student_name=student_name)
+    return render_template('Test/page.html', student_name=student_name)
 
 # Flask Lab Exercise #03
 # 3)In this exercise, you need to work with static files; please add the bootstrap
@@ -79,7 +109,7 @@ def student_html_page(name_id):
 # framework. In this practice, you need to use url_for('static', filename='pathfilename')
 @app.route('/templatehtml')
 def bootstrap():
-    return render_template('templatehtml.html')
+    return render_template('Test/templatehtml.html')
 
 
 # Flask Lab Exercise #04
@@ -88,7 +118,7 @@ def bootstrap():
 # Note: The posts template is in the index of this document.
 @app.route('/blog')
 def posthtml():
-    return render_template('blog.html',posts=posts,name_website='IS 2020 Platform')
+    return render_template('Test/blog.html', posts=posts, name_website='IS 2020 Platform')
 
 # Flask Lab Exercise #05
 # 5) Develop a page by dividing one single HTML page into a sub-section by using Jinja
@@ -101,18 +131,16 @@ def posthtml():
 # we extend blog-2.html page from layout.html
 @app.route('/bloglayout')
 @app.route('/index')
-@app.route('/')
-def posthtml_layout():
-    return render_template('blog-2.html',posts=posts,name_website='Blog IS 2020 Platform')
+
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'),404
+    return render_template('Test/404.html'), 404
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template('500.html'),500
+    return render_template('Test/500.html'), 500
 
 # Flask Lab Exercise #06 and #07
 # 6) and 7) Develop a webpage with webform that asks for the following information:
@@ -132,7 +160,7 @@ def regiterPage():
         session['email']=regiterForm.email.data
         #TODO store on the db
         return redirect(url_for('dashboard'))
-    return render_template('register.html',regiterForm=regiterForm,name_website='Registration to IS 2020 Platform',name=name)
+    return render_template('Test/register.html', regiterForm=regiterForm, name_website='Registration to IS 2020 Platform', name=name)
 
 # The solution for Flask Lab Exercise #02 starts from here
 # 1) solution is inside the model.py
@@ -174,7 +202,7 @@ def regiterPagedb():
         db.session.add(newuser)
         db.session.commit()
         return redirect(url_for('posthtml_layout'))
-    return render_template('register-db.html',regiterForm=regiterForm,name_website='SQL Registration to IS 2020 Platform',name=name)
+    return render_template('Test/register-db.html', regiterForm=regiterForm, name_website='SQL Registration to IS 2020 Platform', name=name)
 
 
 # 4) As you know, the username is a unique value in the user's table, so if someone wants to
@@ -203,14 +231,14 @@ def login():
             session['role_id'] = user_info.role_id
             return redirect('dashboard')
 
-    return render_template('login.html', login_form=login_form)
+    return render_template('Test/0_login.html', login_form=login_form)
 
 
 @app.route('/dashboard')
 def dashboard():
     if session.get('email'):
         name=session.get('name')
-        return render_template('dashboard.html',name=name)
+        return render_template('Test/dashboard.html', name=name)
     else:
         return redirect(url_for('login'))
     
@@ -220,19 +248,7 @@ def logout():
     session.clear()
     return redirect(url_for('posthtml_layout')) # =>redirect(index)
 
-
-@app.route('/test')
-def layout():
-    return render_template('02_index.html')
-
-@app.route('/testDashboard')
-def testDashboard():
-    return render_template('0_index.html')
-
-@app.route('/testLogin')
-def testLogin():
-    return render_template('0_register.html')
+'''
 
 
-if __name__ == '__main__':
-    app.run()
+
