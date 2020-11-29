@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 app = Flask(__name__)
 
 @app.route('/')
+@app.route('/logout')
 def landing():
     return render_template('landingPage.html')
 
@@ -16,6 +17,12 @@ def homePage():
 @app.route('/login')
 def login():
     return render_template('login.html')
+
+@app.route('/search')
+def search():
+    return render_template('searchPage.html')
+
+
 
 if __name__ == '__main__':
     app.run()
