@@ -10,6 +10,12 @@
  - implement Search function in the TOPBAR
  - implement logout, notifications, messages in the top BAR
 
+ 3 - LogIn/ Registration
+ - fixed navbar
+ - function for login
+ - function for registration
+ - LogIn/Registration with Google and Facebook
+
 
 
 Questions

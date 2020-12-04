@@ -18,6 +18,14 @@ def homePage():
 def login():
     return render_template('login.html')
 
+@app.route('/registration')
+def registration():
+    return render_template('registration.html')
+
+@app.route('/forgot-password')
+def forgot_password():
+    return render_template('forgot-password.html')
+
 @app.route('/search')
 def search():
     return render_template('searchPage.html')
