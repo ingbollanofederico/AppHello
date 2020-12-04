@@ -5,6 +5,15 @@ from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
 
+#Database settings
+app.config['SECRET_KEY']='sssdhgclshfsh;shd;jshjhsjhjhsjldchljk'
+app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///website.db'
+db = SQLAlchemy(app)
+bcrypt = Bcrypt(app)
+
+from model import User, Permissions
+from form import formRegistration
+
 @app.route('/')
 @app.route('/logout')
 def landing():
@@ -17,11 +26,11 @@ def homePage():
 @app.route('/login')
 def login():
     return render_template('login.html')
-
+'''
 @app.route('/registration')
 def registration():
     return render_template('registration.html')
-
+'''
 @app.route('/forgot-password')
 def forgot_password():
     return render_template('forgot-password.html')
@@ -29,6 +38,68 @@ def forgot_password():
 @app.route('/search')
 def search():
     return render_template('searchPage.html')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'),404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template('500.html'),500
+
+@app.before_first_request
+def setup():
+    db.drop_all()
+    db.create_all()
+    permission_undergraduate = Permissions(name='Undergaduate Student')
+    permission_bachelor = Permissions(name='Bachelor Student')
+    permission_master = Permissions(name='Master Student')
+    permission_graduated = Permissions(name='Graduated')
+
+    db.session.add_all([permission_undergraduate,
+                        permission_bachelor, permission_master,
+                        permission_graduated])
+    db.session.commit()
+
+
+@app.route('/registration', methods=['POST','GET'])
+def registration():
+    firstName = None
+    lastName = None
+    email = None
+    permission = None
+    registerForm = formRegistration()
+
+    if registerForm.validate_on_submit():
+        firstName = registerForm.firstName.data
+        lastName = registerForm.lastName.data
+        email = registerForm.email.data
+        permission = registerForm.permission.data
+
+        session['firstName'] = firstName
+        session['lastName'] = lastName
+        session['username'] = email
+
+        #ENCODE PASSWORD BEFORE ADDING IT
+        password_1 = bcrypt.generate_password_hash(registerForm.password.data).encode('utf-8')
+
+        #creation of the USER
+        newUser = User(username=email, firstName=firstName, lastName=lastName,  password=password_1, permissions_id=permission)
+
+        #save everything in the db
+        db.session.add(newUser)
+        db.session.commit()
+        '''
+        #send mail
+        sendmail(regiterForm.name.data,
+                 'You have registred succesfully',
+                 'mail',
+                 name=regiterForm.name.data,
+                 username=regiterForm.email.data,
+                 password=password_2)
+        '''
+        return redirect(url_for('login'))
+    return render_template('registration.html',regiterForm=registerForm)
 
 
 
