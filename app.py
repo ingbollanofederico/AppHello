@@ -84,7 +84,7 @@ def registration():
         password_1 = bcrypt.generate_password_hash(registerForm.password.data).encode('utf-8')
 
         #creation of the USER
-        newUser = User(username=email, firstName=firstName, lastName=lastName,  password=password_1, permissions_id=permission)
+        newUser = User(email=email, firstName=firstName, lastName=lastName,  password=password_1, permissions_id=permission)
 
         #save everything in the db
         db.session.add(newUser)
@@ -99,7 +99,7 @@ def registration():
                  password=password_2)
         '''
         return redirect(url_for('login'))
-    return render_template('registration.html',regiterForm=registerForm)
+    return render_template('registration.html',registerForm=registerForm)
 
 
 
