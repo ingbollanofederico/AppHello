@@ -2,6 +2,10 @@
 from flask import Flask,render_template,redirect,url_for,session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+import os
+import sqlite3
+
+import db_connector
 
 app = Flask(__name__)
 
@@ -10,6 +14,7 @@ app.config['SECRET_KEY']='sssdhgclshfsh;shd;jshjhsjhjhsjldchljk'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///website.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+
 
 from model import User, Permissions
 from form import formRegistration
@@ -26,11 +31,7 @@ def homePage():
 @app.route('/login')
 def login():
     return render_template('login.html')
-'''
-@app.route('/registration')
-def registration():
-    return render_template('registration.html')
-'''
+
 @app.route('/forgot-password')
 def forgot_password():
     return render_template('forgot-password.html')
@@ -47,20 +48,34 @@ def page_not_found(e):
 def server_error(e):
     return render_template('500.html'),500
 
+
 @app.before_first_request
 def setup():
-    db.drop_all()
+
+    conn = db_connector.create_connection()
+
+    #add here all the tables to be dropped at the setup
+    tables_db = ['permissions']
+    db_connector.dropTables(conn, tables_db)
+
+    #create all the tables in the db (classes in model)
     db.create_all()
-    permission_undergraduate = Permissions(name='Undergaduate Student')
+
+    #method 1 adding 1 item in the table
+    cursor = conn.cursor()
+    query1 = "INSERT INTO permissions VALUES (1,'High School Student')"
+    cursor.execute(query1)
+    conn.commit()
+    conn.close()
+
+    #method 2 adding 1 item in the table
     permission_bachelor = Permissions(name='Bachelor Student')
     permission_master = Permissions(name='Master Student')
     permission_graduated = Permissions(name='Graduated')
 
-    db.session.add_all([permission_undergraduate,
-                        permission_bachelor, permission_master,
+    db.session.add_all([permission_bachelor, permission_master,
                         permission_graduated])
     db.session.commit()
-
 
 @app.route('/registration', methods=['POST','GET'])
 def registration():
@@ -102,10 +117,8 @@ def registration():
     return render_template('registration.html',registerForm=registerForm)
 
 
-
 if __name__ == '__main__':
     app.run()
-
 
 '''
 
