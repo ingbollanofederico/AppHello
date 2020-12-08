@@ -54,7 +54,7 @@ def setup():
 
     conn = db_connector.create_connection()
 
-    #add here all the tables to be dropped at the setup
+    #add here all the tables to be dropped during the setup
     tables_db = ['permissions']
     db_connector.dropTables(conn, tables_db)
 
