@@ -52,6 +52,7 @@ class User (db.Model):
     def __repr__(self):
         return "<User %r>" % self.firstName
 
+
 from model import Permissions
 from form import formRegistration, loginForm, forgotPassword
 
