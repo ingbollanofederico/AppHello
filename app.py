@@ -1,9 +1,11 @@
 #import
-from flask import Flask,render_template,redirect,url_for,session
-from flask_sqlalchemy import SQLAlchemy
-from flask_bcrypt import Bcrypt
 import os
 import sqlite3
+from flask import Flask,render_template,redirect,url_for,session, flash
+from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_mail import Mail,Message
+from itsdangerous import Serializer
 
 import db_connector
 
@@ -16,25 +18,55 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 
-from model import User, Permissions
-from form import formRegistration
+app.config['MAIL_SERVER']='smtp.mail.com'
+app.config['MAIL_PORT']=587
+app.config['MAIL_SSL']=False
+app.config['MAIL_TLS']=True
+app.config['MAIL_USERNAME']=os.environ['EMAIL_USERNAME']
+app.config['MAIL_PASSWORD']=os.environ['EMAIL_PASSWORD']
+
+mail = Mail(app)
+
+class User (db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    email = db.Column(db.String(50),unique=True,nullable=False)
+    firstName = db.Column(db.String(50),nullable=False)
+    lastName = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(200),nullable=False)
+    permissions_id = db.Column(db.Integer, db.ForeignKey('permissions.id'))
+
+    #Token for password reset
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.email}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
+
+    def __repr__(self):
+        return "<User %r>" % self.firstName
+
+from model import Permissions
+from form import formRegistration, loginForm, forgotPassword
 
 @app.route('/')
-@app.route('/logout')
 def landing():
     return render_template('landingPage.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('landing'))
 
 @app.route('/homePage')
 def homePage():
     return render_template('homePage.html')
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
-
-@app.route('/forgot-password')
-def forgot_password():
-    return render_template('forgot-password.html')
 
 @app.route('/search')
 def search():
@@ -79,6 +111,8 @@ def setup():
 
 @app.route('/registration', methods=['POST','GET'])
 def registration():
+    if 'logged_in' in session:
+        return redirect(url_for('homePage'))
     firstName = None
     lastName = None
     email = None
@@ -91,10 +125,6 @@ def registration():
         email = registerForm.email.data
         permission = registerForm.permission.data
 
-        session['firstName'] = firstName
-        session['lastName'] = lastName
-        session['username'] = email
-
         #ENCODE PASSWORD BEFORE ADDING IT
         password_1 = bcrypt.generate_password_hash(registerForm.password.data).encode('utf-8')
 
@@ -104,18 +134,92 @@ def registration():
         #save everything in the db
         db.session.add(newUser)
         db.session.commit()
-        '''
+
         #send mail
-        sendmail(regiterForm.name.data,
+        sendmail(registerForm.email.data,
                  'You have registred succesfully',
                  'mail',
-                 name=regiterForm.name.data,
-                 username=regiterForm.email.data,
-                 password=password_2)
-        '''
+                 firstName=registerForm.firstName.data,
+                 email=registerForm.email.data,
+                 password=registerForm.password.data)
+
         return redirect(url_for('login'))
     return render_template('registration.html',registerForm=registerForm)
 
+@app.route('/login', methods=['POST', 'GET'])
+def login():
+    if 'logged_in' in session:
+        return redirect(url_for('homePage'))
+    login_form = loginForm()
+    if login_form.validate_on_submit():
+        user_info = User.query.filter_by(email=login_form.email.data).first()
+        if user_info and bcrypt.check_password_hash(user_info.password, login_form.password.data):
+            session['user_id'] = user_info.id
+            session['first name'] = user_info.firstName
+            session['last name'] = user_info.lastName
+            session['email'] = user_info.email
+            session['permissions_id'] = user_info.permissions_id
+            session['logged_in'] = True
+            return redirect('homePage')
+        else:
+            flash('Login Unsuccessful. Please check email and password', 'danger')
+
+    return render_template('login.html', login_form=login_form)
+
+
+@app.route('/forgot-password', methods=['POST', 'GET'])
+def forgot_password():
+    if 'logged_in' in session:
+        return redirect(url_for('homePage'))
+
+    forgot_password_form = forgotPassword()
+    if forgot_password_form.validate_on_submit():
+        user_info = User.query.filter_by(email=forgot_password_form.email.data).first()
+        if user_info:
+            token = user_info.get_reset_token()
+            sendmail(forgot_password_form.email.data,
+                     'Reset Password',
+                     'reset_mail',
+                     firstName=user_info.firstName,
+                     email=forgot_password_form.email.data,
+                     password=user_info.password,
+                     token=token)
+            flash('An email with instructions to reset your password has been sent to the specified account.', 'info')
+        else:
+            flash('User not found. Please check again the e-mail or register a new account.', 'danger')
+
+    return render_template('forgot-password.html', forgot_password_form=forgot_password_form)
+
+
+@app.route('/reset_password/<token>', methods=['POST', 'GET'])
+def reset_password(token):
+    if 'logged_in' in session:
+        return redirect(url_for('homePage'))
+
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('Expired or invalid token', 'warning')
+        return redirect(url_for('forgot-password'))
+
+    reset_password_form = forgotPassword()
+    if reset_password_form.validate_on_submit():
+        password_1 = bcrypt.generate_password_hash(reset_password_form.password.data).encode('utf-8')
+        pwd = password_1
+        db.get_engine().connect().execute("""UPDATE user
+                                                     SET pwd = '""" + pwd + """'
+                                                     WHERE id = '""" + user.id + """'""")
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    return render_template('reset_password.html', title='Reset Password', reset_password_form=reset_password_form)
+
+
+def sendmail(to, subject, template, **kwargs):
+    msg=Message(subject,
+                recipients=[to],
+                sender=app.config['MAIL_USERNAME'])
+
+    msg.html=render_template(template+'.html',**kwargs )
+    mail.send(msg)
 
 if __name__ == '__main__':
     app.run()
@@ -318,19 +422,7 @@ def regiterPagedb():
 
 # 5) Develop a login page. This page has to verify the user data and then have to save the user
 # data into the session variable and then redirect it to the profile page.
-@app.route('/login', methods=['POST', 'GET'])
-def login():
-    login_form = loginForm()
-    if login_form.validate_on_submit():
-        user_info = User.query.filter_by(username=login_form.username.data).first()
-        if user_info and bcrypt.check_password_hash(user_info.password, login_form.password.data):
-            session['user_id'] = user_info.id
-            session['name'] = user_info.name
-            session['email'] = user_info.username
-            session['role_id'] = user_info.role_id
-            return redirect('dashboard')
 
-    return render_template('Test/0_login.html', login_form=login_form)
 
 
 @app.route('/dashboard')

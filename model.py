@@ -1,16 +1,6 @@
 from app import db
-
-
-class User (db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    email = db.Column(db.String(50),unique=True,nullable=False)
-    firstName = db.Column(db.String(50),nullable=False)
-    lastName = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(200),nullable=False)
-    permissions_id = db.Column(db.Integer, db.ForeignKey('permissions.id'))
-
-    def __repr__(self):
-        return "<User %r>" % self.firstName, self.lastName
+from flask import current_app
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 class Permissions (db.Model):
