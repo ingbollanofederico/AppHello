@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail,Message
 from itsdangerous import Serializer
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 import db_connector
 
@@ -16,7 +17,6 @@ app.config['SECRET_KEY']='sssdhgclshfsh;shd;jshjhsjhjhsjldchljk'
 app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///website.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-
 
 app.config['MAIL_SERVER']='smtp.mail.com'
 app.config['MAIL_PORT']=587
