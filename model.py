@@ -1,6 +1,4 @@
 from app import db
-from flask import current_app
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 
 class Permissions (db.Model):
