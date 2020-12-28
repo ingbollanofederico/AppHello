@@ -33,7 +33,9 @@ class User (db.Model):
     firstName = db.Column(db.String(50),nullable=False)
     lastName = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200),nullable=False)
+
     permissions_id = db.Column(db.Integer, db.ForeignKey('permissions.id'))
+    reviews = db.relationship('Review', backref='User')  # only here, not in the db
 
     #Token for password reset
     def get_reset_token(self, expires_sec=1800):
