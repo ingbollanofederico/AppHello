@@ -38,4 +38,14 @@ class resetPassword (FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20),
                                                      EqualTo('repeat_password', message='Passwords must match')])
     repeat_password = PasswordField('Repeat Password', validators=[DataRequired(), Length(min=6, max=20)])
-submit = SubmitField('Reset Password')
+    submit = SubmitField('Reset Password')
+
+class formSearch (FlaskForm):
+
+    searchMethod = SelectField('Search Method',
+                             choices=[('University', 'University'),
+                                      ('Program', 'Degree Course'),
+                                      ('Exam', 'Exam')], validators=[DataRequired()])
+    city = SelectField('city', choices=[])
+    searchText = StringField('University, Degree Course, Exam')
+    submit = SubmitField('Search')

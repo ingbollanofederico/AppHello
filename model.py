@@ -27,7 +27,7 @@ class University(db.Model):
     programs            = db.relationship('Program', backref='university')
 
     def __repr__(self):
-        return "<University %r>" % self.name, self.idUniversity
+        return "<University %r>" % self.name
 
 class Exam (db.Model):
     idExam              = db.Column(db.Integer,primary_key=True)

@@ -7,6 +7,10 @@ from flask_bcrypt import Bcrypt
 from flask_mail import Mail,Message
 from itsdangerous import Serializer
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from sqlalchemy.orm import Session
+from sqlalchemy import and_, or_, not_
+
+
 
 import db_connector
 
@@ -55,8 +59,9 @@ class User (db.Model):
         return "<User %r>" % self.firstName
 
 
-from model import Permissions, Program
-from form import formRegistration, loginForm, forgotPassword
+from model import Permissions, Program, University
+from form import formRegistration, loginForm, forgotPassword, formSearch
+
 
 @app.route('/')
 def landing():
@@ -67,24 +72,64 @@ def logout():
     session.clear()
     return redirect(url_for('landing'))
 
-@app.route('/homePage')
+def searchFunction():
+
+    '''create searchForm'''
+    searchForm = formSearch()
+
+    '''get all cities in the db & adding them to the searchForm'''
+    cities = Program.query.order_by(Program.sedeP)
+    myCities = []
+    for x in cities:
+        myCities.append(x.sedeP)
+
+    myCities = list(dict.fromkeys(myCities))
+    myCities.sort()
+    myCities = ["Select City"] + myCities
+    searchForm.city.choices = myCities
+
+    return searchForm
+
+
+@app.route('/homePage', methods=['POST','GET'])
 def homePage():
     '''If logged in vs not logged in = 2 different views based on customer type/degree/characteristics'''
     program = Program.query.filter_by(sedeC="TORINO").all()
 
+    '''Search Form'''
+    searchForm = searchFunction()
 
-    '''Form for search results - 1) Create Form class, 2) on submit class 3) form in html 4) redirect to result page'''
+    if searchForm.validate_on_submit():
+        searchMethod = searchForm.searchMethod.data
+        city = searchForm.city.data
+        searchText = searchForm.searchText.data
+
+        resultList = []
+        searchForm2 = searchFunction()
+
+        if(city == "Select City"):
+            if(searchMethod == "University"):
+                if (searchText == ""):
+                    resultList = University.query.order_by(University.name).all()
+                else:
+                    searchText = "%"+searchText+"%"
+                    resultList = University.query.filter(or_(University.name.like(searchText), University.nickname.like(searchText)))
 
 
 
 
+        print resultList
 
+        return render_template('searchPage.html', resultList = resultList, searchForm=searchForm2, searchMethod = searchMethod,city= city)
 
-    return render_template('homePage.html', program=program)
+    return render_template('homePage.html', program=program, searchForm=searchForm)
 
-@app.route('/search')
-def search():
-    return render_template('searchPage.html')
+@app.route('/resultPage/<searchMethod>/<city>/<choice>', methods=['POST', 'GET'])
+def resultPage(searchMethod,city,choice):
+    '''query dive deep on university/course/exam + first 3 reviews'''
+    searchForm = searchFunction()
+
+    return render_template('resultPage.html', searchForm=searchForm, searchMethod = searchMethod,city= city )
 
 @app.errorhandler(404)
 def page_not_found(e):
