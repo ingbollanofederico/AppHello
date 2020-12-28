@@ -55,7 +55,7 @@ class User (db.Model):
         return "<User %r>" % self.firstName
 
 
-from model import Permissions
+from model import Permissions, Program
 from form import formRegistration, loginForm, forgotPassword
 
 @app.route('/')
@@ -69,7 +69,18 @@ def logout():
 
 @app.route('/homePage')
 def homePage():
-    return render_template('homePage.html')
+    '''If logged in vs not logged in = 2 different views based on customer type/degree/characteristics'''
+    program = Program.query.filter_by(sedeC="TORINO").all()
+
+
+    '''Form for search results - 1) Create Form class, 2) on submit class 3) form in html 4) redirect to result page'''
+
+
+
+
+
+
+    return render_template('homePage.html', program=program)
 
 @app.route('/search')
 def search():

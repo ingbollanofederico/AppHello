@@ -60,8 +60,9 @@ class Program (db.Model):
 
     exams               = db.relationship('Exam',   backref='program') #only here, not in the db
     reviews             = db.relationship('Review', backref='program')
+
     def __repr__(self):
-        return "<Program %r>" % self.idProgram, self.className, self.courseName
+        return "<Program %r>" % self.idProgram
 
 
 class Review (db.Model):
