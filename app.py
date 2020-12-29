@@ -166,23 +166,7 @@ def searchValidator(searchForm):
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
                                searchMethod=searchMethod, city=city, acedemicDegree=academicDegree)
     else:
-        '''
-        if (searchMethod == "Program"):
-            searchPageList = []
-            for x in resultList:
-                searchPageList.append(x.courseName)
 
-            searchPageList.sort()
-            resultList = searchPageList
-
-        if (searchMethod == "Exam"):
-            searchPageList = []
-            for x in resultList:
-                searchPageList.append(x.exam)
-
-            searchPageList.sort()
-            resultList = searchPageList
-        '''
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2, city=city,
                                academicDegree=academicDegree, searchMethod=searchMethod)
 
@@ -200,6 +184,123 @@ def homePage():
 
     return render_template('homePage.html', program=program, searchForm=searchForm)
 
+def resultValidator(searchForm,searchMethod,city,academicDegree,university,program,exam):
+    resultList = []
+
+    '''query dive deep on university/course/exam + first 3 reviews'''
+
+    '''1 giro'''
+
+    '''university null null - we show here the course program linked to 1 university choice with filters (city/academicDegree)'''
+    if (university != "null" and program == "null" and exam == "null"):
+        if (city == "All"):
+            resultList = Program.query.join(University, University.idUniversity == Program.idUniversity). \
+                filter(
+                and_(Program.academicDegree.ilike(academicDegree), Program.idUniversity.ilike(university))).group_by(
+                Program.courseName).all()
+            searchMethod = "Program"
+        else:
+            resultList = Program.query.join(University, University.idUniversity == Program.idUniversity). \
+                filter(
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                     Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
+            searchMethod = "Program"
+
+        # '''reviews universities'''
+
+    elif (university == "null" and program != "null" and exam == "null"):
+        if (city == "All"):
+            resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program))).group_by(
+                University.name).all()
+            searchMethod = "University"
+        else:
+            resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                filter(
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                     Program.courseName.ilike(program))).group_by(University.name).all()
+            searchMethod = "University"
+
+        # '''reviews program'''
+
+    elif (university == "null" and program == "null" and exam != "null"):
+        if (city == "All"):
+            resultList = Program.query.join(Exam, Exam.idProgram == Program.idProgram). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(exam))).group_by(
+                Program.courseName).all()
+            searchMethod = "Program"
+        else:
+            resultList = Program.query.join(Exam, Exam.idProgram == Program.idProgram). \
+                filter(
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                     Exam.exam.ilike(exam))).group_by(Program.courseName).all()
+            searchMethod = "Program"
+
+        # ''reviews exam'''
+    elif (university != "null" and program != "null" and exam == "null"):
+        if (city == "All"):
+            resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                            Program.idUniversity.ilike(university))).group_by(
+                Exam.exam).all()
+            searchMethod = "Exam"
+        else:
+            resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                            Program.courseName.ilike(program),
+                            Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
+            searchMethod = "Exam"
+
+        # '''reviews program'''
+
+    elif (university == "null" and program != "null" and exam != "null"):
+        if (city == "All"):
+            resultList = University.query.join(
+                Program, University.idUniversity == Program.idUniversity).join(
+                Exam, Program.idProgram == Exam.idProgram).filter(
+                and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                     Exam.exam.ilike(exam))).group_by(University.name).all()
+            searchMethod = "University"
+        else:
+            resultList = University.query.join(
+                Program, University.idUniversity == Program.idUniversity).join(
+                Exam, Program.idProgram == Exam.idProgram).filter(
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                     Program.courseName.ilike(program),
+                     Exam.exam.ilike(exam))).group_by(University.name).all()
+            searchMethod = "University"
+
+        # ''reviews exam'''
+
+    elif (university != "null" and program != "null" and exam != "null"):
+        if (city == "All"):
+            resultList = University.query.join(
+                Program, University.idUniversity == Program.idUniversity).join(
+                Exam, Program.idProgram == Exam.idProgram).filter(
+                and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                     Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
+            searchMethod = "EndSearch"
+        else:
+            resultList = University.query.join(
+                Program, University.idUniversity == Program.idUniversity).join(
+                Exam, Program.idProgram == Exam.idProgram).filter(
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                     Program.courseName.ilike(program),
+                     Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
+            searchMethod = "EndSearch"
+
+        # ''reviews exam'''
+
+
+    else:
+        flash('Your search has been altered during your request! Please try to search it again.', 'warning')
+
+    if (len(resultList) == 0):
+        flash('Your search does not match any information. Please try again!', 'warning')
+
+    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod )
+
+
 
 
 @app.route('/resultPage/<searchMethod>/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
@@ -211,104 +312,7 @@ def resultPage(searchMethod,city,academicDegree,university,program,exam):
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
 
-    resultList= []
-
-    '''query dive deep on university/course/exam + first 3 reviews'''
-
-    '''1 giro'''
-
-    '''university null null - we show here the course program linked to 1 university choice with filters (city/academicDegree)'''
-    if(university!="null" and program == "null" and exam =="null"):
-        if (city == "All"):
-            resultList = Program.query.join(University, University.idUniversity == Program.idUniversity). \
-                filter(and_(Program.academicDegree.ilike(academicDegree), Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
-            searchMethod = "Program"
-        else:
-            resultList = Program.query.join(University, University.idUniversity == Program.idUniversity). \
-                filter(
-                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
-            searchMethod = "Program"
-
-        #'''reviews universities'''
-
-    elif (university == "null" and program != "null" and exam == "null"):
-        if (city == "All"):
-            resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
-                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program))).group_by(University.name).all()
-            searchMethod = "University"
-        else:
-            resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
-                filter(
-                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program))).group_by(University.name).all()
-            searchMethod = "University"
-
-        # '''reviews program'''
-
-    elif (university == "null" and program == "null" and exam != "null"):
-        if (city == "All"):
-            resultList = Program.query.join(Exam, Exam.idProgram == Program.idProgram). \
-                filter(and_(Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(exam))).group_by(Program.courseName).all()
-            searchMethod = "Program"
-        else:
-            resultList = Program.query.join(Exam, Exam.idProgram == Program.idProgram). \
-                filter(
-                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(exam))).group_by(Program.courseName).all()
-            searchMethod = "Program"
-
-        # ''reviews exam'''
-    elif (university != "null" and program != "null" and exam == "null"):
-        if (city == "All"):
-            resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program), Program.idUniversity.ilike(university))).group_by(
-                Exam.exam).all()
-            searchMethod = "Exam"
-        else:
-            resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
-                            Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
-            searchMethod = "Exam"
-
-        # '''reviews program'''
-
-    elif (university == "null" and program != "null" and exam != "null"):
-        if (city == "All"):
-            resultList = University.query.join(
-                    Program, University.idUniversity == Program.idUniversity).join(
-                    Exam, Program.idProgram == Exam.idProgram).filter(
-                    and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program), Exam.exam.ilike(exam))).group_by(University.name).all()
-            searchMethod = "University"
-        else:
-            resultList = University.query.join(
-                Program, University.idUniversity == Program.idUniversity).join(
-                Exam, Program.idProgram == Exam.idProgram).filter(
-                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
-                     Exam.exam.ilike(exam))).group_by(University.name).all()
-            searchMethod = "University"
-        # ''reviews exam'''
-
-    elif (university != "null" and program != "null" and exam != "null"):
-        if (city == "All"):
-            resultList = University.query.join(
-                    Program, University.idUniversity == Program.idUniversity).join(
-                    Exam, Program.idProgram == Exam.idProgram).filter(
-                    and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program), Exam.exam.ilike(exam),Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
-            searchMethod = "EndSearch"
-        else:
-            resultList = University.query.join(
-                Program, University.idUniversity == Program.idUniversity).join(
-                Exam, Program.idProgram == Exam.idProgram).filter(
-                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
-                     Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
-            searchMethod = "EndSearch"
-        # ''reviews exam'''
-    else:
-        flash('Your search has been altered during your request! Please try to search it again.', 'warning')
-
-    if (len(resultList) == 0):
-        flash('Your search does not match any information. Please try again!', 'warning')
-
-    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod )
-
+    return resultValidator(searchForm,searchMethod,city,academicDegree,university,program,exam)
 
 
 @app.errorhandler(404)
