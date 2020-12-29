@@ -96,7 +96,7 @@ def homePage():
     '''If logged in vs not logged in = 2 different views based on customer type/degree/characteristics'''
     program = Program.query.filter_by(sedeC="TORINO").all()
 
-    '''Search Form'''
+    '''Search Function'''
     searchForm = searchFunction()
 
     if searchForm.validate_on_submit():
@@ -181,10 +181,66 @@ def homePage():
 
     return render_template('homePage.html', program=program, searchForm=searchForm)
 
-@app.route('/resultPage/<searchMethod>/<city>/<choice>', methods=['POST', 'GET'])
-def resultPage(searchMethod,city,choice):
+@app.route('/resultPage/<searchMethod>/<city>/<university>/<program>/<exam>', methods=['POST', 'GET'])
+def resultPage(searchMethod,city,university,program,exam):
+
     '''query dive deep on university/course/exam + first 3 reviews'''
     searchForm = searchFunction()
+
+    '''1 giro'''
+
+    '''university nul null'''
+        #'''to program'''
+        #'''reviews universities'''
+
+    '''null program null'''
+       # '''to university'''
+        #'''reviews program'''
+
+    '''null null exam'''
+       # '''to program'''
+        #''reviews exam'''
+
+
+    '''2 giro'''
+
+    '''university program null'''
+        # '''to exam'''
+        # '''reviews program'''
+
+    '''university program null - INUTILE'''
+       # '''to exam'''
+        # '''reviews program'''
+
+    '''null program exam'''
+       # '''to university'''
+        #''reviews exam'''
+
+    '''3 giro'''
+
+    '''university program exam'''
+        # '''reviews EXAM'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     return render_template('resultPage.html', searchForm=searchForm, searchMethod = searchMethod,city= city )
 

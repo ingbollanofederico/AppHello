@@ -264,12 +264,17 @@
                     <div class="card-body">
                         {%if searchMethod == "University" %}
                             <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, choice=result.idUniversity) }}" rel="icon" type="image/x-icon">{{result.display()}}</a>
+                            city=city, university=result.idUniversity, program=null, exam = null) }}" rel="icon" type="image/x-icon">{{result.display()}}</a>
                         {% endif %}
 
-                        {%if searchMethod == "Program" or searchMethod == "Exam"%}
+                        {%if searchMethod == "Program" %}
                             <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, choice=result) }}" rel="icon" type="image/x-icon">{{result}}</a>
+                            city=city, program=result, university = null, exam = null) }}" rel="icon" type="image/x-icon">{{result}}</a>
+                        {% endif %}
+
+                        {%if searchMethod == "Exam"%}
+                            <a href="{{ url_for('resultPage', searchMethod=searchMethod,
+                            city=city, exam=result, university = null, exam = null) }}" rel="icon" type="image/x-icon">{{result}}</a>
                         {% endif %}
 
                     </div>
