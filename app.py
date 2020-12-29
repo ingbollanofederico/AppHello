@@ -315,6 +315,45 @@ def resultPage(searchMethod,city,academicDegree,university,program,exam):
     return resultValidator(searchForm,searchMethod,city,academicDegree,university,program,exam)
 
 
+@app.route('/universities', methods=['POST', 'GET'])
+def universities():
+    university = University.query.order_by(University.name).all()
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    return render_template('infoPage.html', university=university, searchForm=searchForm, element="university")
+
+
+
+@app.route('/programs', methods=['POST', 'GET'])
+def programs():
+    program = Program.query.group_by(Program.courseName).all()
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    return render_template('infoPage.html', program=program, searchForm=searchForm, element="program")
+
+@app.route('/exams', methods=['POST', 'GET'])
+def exams():
+    exam = Exam.query.group_by(Exam.exam).all()
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'),404
