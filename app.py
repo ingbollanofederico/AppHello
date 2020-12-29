@@ -85,7 +85,7 @@ def searchFunction():
 
     myCities = list(dict.fromkeys(myCities))
     myCities.sort()
-    myCities = ["Select City"] + myCities
+    myCities = ["All"] + myCities
     searchForm.city.choices = myCities
 
     return searchForm
@@ -103,11 +103,12 @@ def homePage():
         searchMethod = searchForm.searchMethod.data
         city = searchForm.city.data
         searchText = searchForm.searchText.data
+        academicDegree = searchForm.acedemicDegree.data
 
         resultList = []
         searchForm2 = searchFunction()
 
-        if(city == "Select City"):
+        if(city == "All"):
             if(searchMethod == "University"):
                 if (searchText == ""):
                     resultList = University.query.order_by(University.name).all()
@@ -116,17 +117,19 @@ def homePage():
                     resultList = University.query.filter(or_(University.name.ilike(searchText), University.nickname.ilike(searchText))).group_by(University.name).all()
             if (searchMethod == "Program"):
                 if (searchText == ""):
-                    resultList = Program.query.group_by(Program.courseName).all()
+                    resultList = Program.query.filter(Program.academicDegree.ilike(academicDegree)).group_by(Program.courseName).all()
                 else:
                     searchText = "%" + searchText + "%"
-                    resultList = Program.query.filter(
-                        or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText))).group_by(Program.courseName).all()
+                    resultList = Program.query.filter(and_(Program.academicDegree.ilike(academicDegree),
+                                                           or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText)))).group_by(Program.courseName).all()
             if (searchMethod == "Exam"):
                 if (searchText == ""):
-                    resultList = Exam.query.group_by(Exam.exam).all()
+                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                        filter(Program.academicDegree.ilike(academicDegree)).group_by(Exam.exam).all()
                 else:
                     searchText = "%" + searchText + "%"
-                    resultList = Exam.query.filter(Exam.exam.ilike(searchText)).group_by(Exam.exam).all()
+                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                        filter(and_(Program.academicDegree.ilike(academicDegree),Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
         else:
             if (searchMethod == "University"):
                 if (searchText == ""):
@@ -138,25 +141,26 @@ def homePage():
                         filter(and_(Program.sedeP.ilike(city), or_(University.name.ilike(searchText), University.nickname.ilike(searchText)))).all()
             if (searchMethod == "Program"):
                 if (searchText == ""):
-                    resultList = Program.query.filter(Program.sedeP.ilike(city)).group_by(Program.courseName).all()
+                    resultList = Program.query.filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree))).group_by(Program.courseName).all()
                 else:
                     searchText = "%" + searchText + "%"
                     resultList = Program.query.\
-                        filter(and_(Program.sedeP.ilike(city),or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText)))).group_by(Program.courseName).all()
+                        filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree),
+                                    or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText)))).group_by(Program.courseName).all()
+
             if (searchMethod == "Exam"):
                 if (searchText == ""):
                     resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                        filter(Program.sedeP.ilike(city)).group_by(Exam.exam).all()
+                        filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree))).group_by(Exam.exam).all()
                 else:
                     searchText = "%" + searchText + "%"
                     resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                        filter(and_(Program.sedeP.ilike(city),Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
-
+                        filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
 
         if (len(resultList) ==0):
             flash('Your search does not match any information. Please try again!', 'warning')
             return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
-                                   searchMethod=searchMethod, city=city)
+                                   searchMethod=searchMethod, city=city, acedemicDegree = academicDegree)
         else:
 
 
@@ -177,12 +181,12 @@ def homePage():
                 resultList = searchPageList
 
 
-            return render_template('searchPage.html', resultList = resultList, searchForm=searchForm2, searchMethod = searchMethod,city= city)
+            return render_template('searchPage.html', resultList = resultList, searchForm=searchForm2, searchMethod = searchMethod,city= city, academicDegree=academicDegree)
 
     return render_template('homePage.html', program=program, searchForm=searchForm)
 
-@app.route('/resultPage/<searchMethod>/<city>/<university>/<program>/<exam>', methods=['POST', 'GET'])
-def resultPage(searchMethod,city,university,program,exam):
+@app.route('/resultPage/<searchMethod>/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
+def resultPage(searchMethod,city,academicDegree, university,program,exam):
 
     '''query dive deep on university/course/exam + first 3 reviews'''
     searchForm = searchFunction()
@@ -221,28 +225,7 @@ def resultPage(searchMethod,city,university,program,exam):
     '''university program exam'''
         # '''reviews EXAM'''
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    return render_template('resultPage.html', searchForm=searchForm, searchMethod = searchMethod,city= city )
+    return render_template('resultPage.html', searchForm=searchForm, searchMethod = searchMethod,city= city, academicDegree=academicDegree )
 
 @app.errorhandler(404)
 def page_not_found(e):

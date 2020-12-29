@@ -58,10 +58,11 @@ class Program (db.Model):
     className           = db.Column(db.String(50),nullable=False)
     courseName          = db.Column(db.String(50),nullable=False)
     sedeC               = db.Column(db.String(50),nullable=False)
-    sedeP               = db.Column(db.String(50))
+    sedeP               = db.Column(db.String(50),nullable=False)
     language1           = db.Column(db.String(50),nullable=False,default="IT")
     language2           = db.Column(db.String(50))
     language3           = db.Column(db.String(50))
+    academicDegree      = db.Column(db.String(200), nullable=False)
 
     exams               = db.relationship('Exam',   backref='program') #only here, not in the db
     reviews             = db.relationship('Review', backref='program')

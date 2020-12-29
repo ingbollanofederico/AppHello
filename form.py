@@ -47,5 +47,12 @@ class formSearch (FlaskForm):
                                       ('Program', 'Degree Course'),
                                       ('Exam', 'Exam')], validators=[DataRequired()])
     city = SelectField('city', choices=[])
+    acedemicDegree = SelectField('Academic Degree',
+                               choices=[('%', 'All'),
+                                        ('Laurea Triennale', 'Laurea Triennale'),
+                                        ('Laurea Magistrale', 'Laurea Magistrale'),
+                                        ('Laurea Magistrale Ciclo Unico', 'Laurea Magistrale Ciclo Unico')], validators=[DataRequired()])
+
     searchText = StringField('University, Degree Course, Exam')
+
     submit = SubmitField('Search')

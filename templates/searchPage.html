@@ -26,6 +26,10 @@
             {{ searchForm.city(class="form-control bg-light border-0 small") }}
             </div>
 
+            <div>
+            {{ searchForm.acedemicDegree(class="form-control bg-light border-0 small") }}
+            </div>
+
             <div class="input-group-append">
             {{ searchForm.submit(class="btn btn-primary") }}
                 {{ searchForm.hidden_tag() }}
@@ -264,17 +268,17 @@
                     <div class="card-body">
                         {%if searchMethod == "University" %}
                             <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, university=result.idUniversity, program=null, exam = null) }}" rel="icon" type="image/x-icon">{{result.display()}}</a>
+                            city=city, academicDegree=academicDegree, university=result.idUniversity, program="null", exam = "null") }}" >{{result.display()}}</a>
                         {% endif %}
 
                         {%if searchMethod == "Program" %}
                             <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, program=result, university = null, exam = null) }}" rel="icon" type="image/x-icon">{{result}}</a>
+                            city=city, academicDegree=academicDegree, program=result, university = "null", exam = "null") }}"  >{{result}}</a>
                         {% endif %}
 
                         {%if searchMethod == "Exam"%}
                             <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, exam=result, university = null, exam = null) }}" rel="icon" type="image/x-icon">{{result}}</a>
+                            city=city, academicDegree=academicDegree, exam=result, university = "null", program = "null") }}" >{{result}}</a>
                         {% endif %}
 
                     </div>
