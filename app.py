@@ -72,6 +72,7 @@ def logout():
     session.clear()
     return redirect(url_for('landing'))
 
+
 def searchFunction():
 
     '''create searchForm'''
@@ -90,6 +91,101 @@ def searchFunction():
 
     return searchForm
 
+def searchValidator(searchForm):
+    searchMethod = searchForm.searchMethod.data
+    city = searchForm.city.data
+    searchText = searchForm.searchText.data
+    academicDegree = searchForm.acedemicDegree.data
+
+    resultList = []
+    searchForm2 = searchFunction()
+
+    if (city == "All"):
+        if (searchMethod == "University"):
+            if (searchText == ""):
+                resultList = University.query.order_by(University.name).all()
+            else:
+                searchText = "%" + searchText + "%"
+                resultList = University.query.filter(
+                    or_(University.name.ilike(searchText), University.nickname.ilike(searchText))).group_by(
+                    University.name).all()
+        if (searchMethod == "Program"):
+            if (searchText == ""):
+                resultList = Program.query.filter(Program.academicDegree.ilike(academicDegree)).group_by(
+                    Program.courseName).all()
+            else:
+                searchText = "%" + searchText + "%"
+                resultList = Program.query.filter(and_(Program.academicDegree.ilike(academicDegree),
+                                                       or_(Program.courseName.ilike(searchText),
+                                                           Program.className.ilike(searchText)))).group_by(
+                    Program.courseName).all()
+        if (searchMethod == "Exam"):
+            if (searchText == ""):
+                resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                    filter(Program.academicDegree.ilike(academicDegree)).group_by(Exam.exam).all()
+            else:
+                searchText = "%" + searchText + "%"
+                resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                    filter(and_(Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(searchText))).group_by(
+                    Exam.exam).all()
+    else:
+        if (searchMethod == "University"):
+            if (searchText == ""):
+                resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                    filter(Program.sedeP.ilike(city)).all()
+            else:
+                searchText = "%" + searchText + "%"
+                resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                    filter(and_(Program.sedeP.ilike(city),
+                                or_(University.name.ilike(searchText), University.nickname.ilike(searchText)))).all()
+        if (searchMethod == "Program"):
+            if (searchText == ""):
+                resultList = Program.query.filter(
+                    and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree))).group_by(
+                    Program.courseName).all()
+            else:
+                searchText = "%" + searchText + "%"
+                resultList = Program.query. \
+                    filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                                or_(Program.courseName.ilike(searchText),
+                                    Program.className.ilike(searchText)))).group_by(Program.courseName).all()
+
+        if (searchMethod == "Exam"):
+            if (searchText == ""):
+                resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                    filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree))).group_by(
+                    Exam.exam).all()
+            else:
+                searchText = "%" + searchText + "%"
+                resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                    filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                                Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
+
+    if (len(resultList) == 0):
+        flash('Your search does not match any information. Please try again!', 'warning')
+        return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
+                               searchMethod=searchMethod, city=city, acedemicDegree=academicDegree)
+    else:
+        '''
+        if (searchMethod == "Program"):
+            searchPageList = []
+            for x in resultList:
+                searchPageList.append(x.courseName)
+
+            searchPageList.sort()
+            resultList = searchPageList
+
+        if (searchMethod == "Exam"):
+            searchPageList = []
+            for x in resultList:
+                searchPageList.append(x.exam)
+
+            searchPageList.sort()
+            resultList = searchPageList
+        '''
+        return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2, city=city,
+                               academicDegree=academicDegree, searchMethod=searchMethod)
+
 
 @app.route('/homePage', methods=['POST','GET'])
 def homePage():
@@ -100,132 +196,113 @@ def homePage():
     searchForm = searchFunction()
 
     if searchForm.validate_on_submit():
-        searchMethod = searchForm.searchMethod.data
-        city = searchForm.city.data
-        searchText = searchForm.searchText.data
-        academicDegree = searchForm.acedemicDegree.data
-
-        resultList = []
-        searchForm2 = searchFunction()
-
-        if(city == "All"):
-            if(searchMethod == "University"):
-                if (searchText == ""):
-                    resultList = University.query.order_by(University.name).all()
-                else:
-                    searchText = "%"+searchText+"%"
-                    resultList = University.query.filter(or_(University.name.ilike(searchText), University.nickname.ilike(searchText))).group_by(University.name).all()
-            if (searchMethod == "Program"):
-                if (searchText == ""):
-                    resultList = Program.query.filter(Program.academicDegree.ilike(academicDegree)).group_by(Program.courseName).all()
-                else:
-                    searchText = "%" + searchText + "%"
-                    resultList = Program.query.filter(and_(Program.academicDegree.ilike(academicDegree),
-                                                           or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText)))).group_by(Program.courseName).all()
-            if (searchMethod == "Exam"):
-                if (searchText == ""):
-                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                        filter(Program.academicDegree.ilike(academicDegree)).group_by(Exam.exam).all()
-                else:
-                    searchText = "%" + searchText + "%"
-                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                        filter(and_(Program.academicDegree.ilike(academicDegree),Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
-        else:
-            if (searchMethod == "University"):
-                if (searchText == ""):
-                    resultList = University.query.join(Program, University.idUniversity == Program.idUniversity).\
-                        filter(Program.sedeP.ilike(city)).all()
-                else:
-                    searchText = "%" + searchText + "%"
-                    resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
-                        filter(and_(Program.sedeP.ilike(city), or_(University.name.ilike(searchText), University.nickname.ilike(searchText)))).all()
-            if (searchMethod == "Program"):
-                if (searchText == ""):
-                    resultList = Program.query.filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree))).group_by(Program.courseName).all()
-                else:
-                    searchText = "%" + searchText + "%"
-                    resultList = Program.query.\
-                        filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree),
-                                    or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText)))).group_by(Program.courseName).all()
-
-            if (searchMethod == "Exam"):
-                if (searchText == ""):
-                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                        filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree))).group_by(Exam.exam).all()
-                else:
-                    searchText = "%" + searchText + "%"
-                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
-                        filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
-
-        if (len(resultList) ==0):
-            flash('Your search does not match any information. Please try again!', 'warning')
-            return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
-                                   searchMethod=searchMethod, city=city, acedemicDegree = academicDegree)
-        else:
-
-
-            if (searchMethod == "Program"):
-                searchPageList = []
-                for x in resultList:
-                    searchPageList.append(x.courseName)
-
-                searchPageList.sort()
-                resultList = searchPageList
-
-            if (searchMethod == "Exam"):
-                searchPageList = []
-                for x in resultList:
-                    searchPageList.append(x.exam)
-
-                searchPageList.sort()
-                resultList = searchPageList
-
-
-            return render_template('searchPage.html', resultList = resultList, searchForm=searchForm2, searchMethod = searchMethod,city= city, academicDegree=academicDegree)
+        return searchValidator(searchForm)
 
     return render_template('homePage.html', program=program, searchForm=searchForm)
 
+
+
 @app.route('/resultPage/<searchMethod>/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
-def resultPage(searchMethod,city,academicDegree, university,program,exam):
+def resultPage(searchMethod,city,academicDegree,university,program,exam):
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
 
     '''query dive deep on university/course/exam + first 3 reviews'''
-    searchForm = searchFunction()
+    resultList= []
 
     '''1 giro'''
 
-    '''university nul null'''
-        #'''to program'''
+    '''university null null - we show here the course program linked to 1 university choice with filters (city/academicDegree)'''
+    if(university!="null" and program == "null" and exam =="null"):
+        if (city == "All"):
+            resultList = Program.query.join(University, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
+            searchMethod = "Program"
+        else:
+            resultList = Program.query.join(University, University.idUniversity == Program.idUniversity). \
+                filter(
+                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
+            searchMethod = "Program"
+
         #'''reviews universities'''
 
-    '''null program null'''
-       # '''to university'''
-        #'''reviews program'''
+    elif (university == "null" and program != "null" and exam == "null"):
+        if (city == "All"):
+            resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program))).group_by(University.name).all()
+            searchMethod = "University"
+        else:
+            resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                filter(
+                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program))).group_by(University.name).all()
+            searchMethod = "University"
 
-    '''null null exam'''
+        # '''reviews program'''
+
+    elif (university == "null" and program == "null" and exam != "null"):
+        if (city == "All"):
+            resultList = Program.query.join(Exam, Exam.idProgram == Program.idProgram). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(exam))).group_by(Program.courseName).all()
+            searchMethod = "Program"
+        else:
+            resultList = Program.query.join(Exam, Exam.idProgram == Program.idProgram). \
+                filter(
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(exam))).group_by(Program.courseName).all()
+            searchMethod = "Program"
+
+        # ''reviews exam'''
+
+    else:
+        flash('Your search has been altered during your request! Please try to search it again.', 'warning')
+
+    '''
+    if (searchMethod == "Program"):
+        searchPageList = []
+        for x in resultList:
+            searchPageList.append(x.courseName)
+
+        searchPageList.sort()
+        resultList = searchPageList
+
+    if (searchMethod == "Exam"):
+        searchPageList = []
+        for x in resultList:
+            searchPageList.append(x.exam)
+
+        searchPageList.sort()
+        resultList = searchPageList
+    '''
+    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod )
+
+
+    #'''null null exam'''
        # '''to program'''
         #''reviews exam'''
 
 
-    '''2 giro'''
+    #'''2 giro'''
 
-    '''university program null'''
+    #'''university program null'''
         # '''to exam'''
         # '''reviews program'''
 
-    '''university program null - INUTILE'''
+    #'''university program null - INUTILE'''
        # '''to exam'''
         # '''reviews program'''
 
-    '''null program exam'''
+    #'''null program exam'''
        # '''to university'''
         #''reviews exam'''
 
-    '''3 giro'''
+    #'''3 giro'''
 
-    '''university program exam'''
+    #'''university program exam'''
         # '''reviews EXAM'''
 
-    return render_template('resultPage.html', searchForm=searchForm, searchMethod = searchMethod,city= city, academicDegree=academicDegree )
 
 @app.errorhandler(404)
 def page_not_found(e):

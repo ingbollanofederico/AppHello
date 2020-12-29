@@ -71,7 +71,7 @@ class Program (db.Model):
         return "<Program %r>" % self.courseName
 
     def display(self):
-        return "%s - (%s %s %s)" % (self.courseName, self.classLevel, self.className, self.idUniversity )
+        return "%s - (%s %s)" % (self.courseName, self.classLevel, self.className )
 
 class Review (db.Model):
     idReview            = db.Column(db.Integer,primary_key=True)

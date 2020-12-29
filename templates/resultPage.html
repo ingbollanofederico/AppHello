@@ -224,8 +224,21 @@
 
      <div class="container-fluid">
 
-     <!-- Home Page dynamic results -->
-                    {% for x in resultList %}
+     <div><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+      </div>
+
+
+     <!-- Result Oage dynamic results -->
+                    {% for result in resultList %}
                     <div class="row">
                         <!-- Area -->
                         <div class="col-xl-8 col-lg-7">
@@ -254,7 +267,32 @@
 
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <p>{{ x.name }}</p>
+                                    <div class="card-body">
+                                        {%if searchMethod == "University" %}
+                                            <p>{{university}}</p>
+                                            <p>{{program}}</p>
+                                            <p>{{exam}}</p>
+                                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            city=city, academicDegree=academicDegree, university=result.idUniversity, program=program, exam = exam) }}" >{{result.display()}}</a>
+                                        {% endif %}
+
+                                        {%if searchMethod == "Program" %}
+                                            <p>{{university}}</p>
+                                            <p>{{program}}</p>
+                                            <p>{{exam}}</p>
+                                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            city=city, academicDegree=academicDegree, program=result.courseName, university = university, exam = exam) }}"  >{{result.display()}}</a>
+                                        {% endif %}
+
+                                        {%if searchMethod == "Exam" %}
+                                            <p>{{university}}</p>
+                                            <p>{{program}}</p>
+                                            <p>{{exam}}</p>
+                                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            city=city, academicDegree=academicDegree, exam=result.exam, university = university, program = program) }}" >{{result.display()}}</a>
+                                        {% endif %}
+
+                                    </div>
                                 </div>
 
                             </div>

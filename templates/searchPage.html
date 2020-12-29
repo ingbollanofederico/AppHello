@@ -236,7 +236,7 @@
         {% endwith %}
       </div>
 
-     <!-- Home Page dynamic results -->
+     <!-- Search Page dynamic results -->
         {% for result in resultList %}
         <div class="row">
             <!-- Area -->
@@ -272,13 +272,13 @@
                         {% endif %}
 
                         {%if searchMethod == "Program" %}
-                            <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, academicDegree=academicDegree, program=result, university = "null", exam = "null") }}"  >{{result}}</a>
+                            <a href="{{ url_for('resultPage', searchMethod =searchMethod,
+                            city=city, academicDegree=academicDegree, program=result.courseName, university = "null", exam = "null") }}"  >{{result.display()}}</a>
                         {% endif %}
 
                         {%if searchMethod == "Exam"%}
-                            <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, academicDegree=academicDegree, exam=result, university = "null", program = "null") }}" >{{result}}</a>
+                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                            city=city, academicDegree=academicDegree, exam=result.exam, university = "null", program = "null") }}" >{{result.display()}}</a>
                         {% endif %}
 
                     </div>
