@@ -2,13 +2,13 @@
 import os
 import sqlite3
 from flask import Flask,render_template,redirect,url_for,session, flash
-from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail,Message
 from itsdangerous import Serializer
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy.orm import Session
-from sqlalchemy import and_, or_, not_
+from sqlalchemy import and_, or_, not_, func
 
 
 
@@ -59,7 +59,7 @@ class User (db.Model):
         return "<User %r>" % self.firstName
 
 
-from model import Permissions, Program, University
+from model import Permissions, Program, University, Exam
 from form import formRegistration, loginForm, forgotPassword, formSearch
 
 
@@ -113,14 +113,71 @@ def homePage():
                     resultList = University.query.order_by(University.name).all()
                 else:
                     searchText = "%"+searchText+"%"
-                    resultList = University.query.filter(or_(University.name.like(searchText), University.nickname.like(searchText)))
+                    resultList = University.query.filter(or_(University.name.ilike(searchText), University.nickname.ilike(searchText))).group_by(University.name).all()
+            if (searchMethod == "Program"):
+                if (searchText == ""):
+                    resultList = Program.query.group_by(Program.courseName).all()
+                else:
+                    searchText = "%" + searchText + "%"
+                    resultList = Program.query.filter(
+                        or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText))).group_by(Program.courseName).all()
+            if (searchMethod == "Exam"):
+                if (searchText == ""):
+                    resultList = Exam.query.group_by(Exam.exam).all()
+                else:
+                    searchText = "%" + searchText + "%"
+                    resultList = Exam.query.filter(Exam.exam.ilike(searchText)).group_by(Exam.exam).all()
+        else:
+            if (searchMethod == "University"):
+                if (searchText == ""):
+                    resultList = University.query.join(Program, University.idUniversity == Program.idUniversity).\
+                        filter(Program.sedeP.ilike(city)).all()
+                else:
+                    searchText = "%" + searchText + "%"
+                    resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
+                        filter(and_(Program.sedeP.ilike(city), or_(University.name.ilike(searchText), University.nickname.ilike(searchText)))).all()
+            if (searchMethod == "Program"):
+                if (searchText == ""):
+                    resultList = Program.query.filter(Program.sedeP.ilike(city)).group_by(Program.courseName).all()
+                else:
+                    searchText = "%" + searchText + "%"
+                    resultList = Program.query.\
+                        filter(and_(Program.sedeP.ilike(city),or_(Program.courseName.ilike(searchText), Program.className.ilike(searchText)))).group_by(Program.courseName).all()
+            if (searchMethod == "Exam"):
+                if (searchText == ""):
+                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                        filter(Program.sedeP.ilike(city)).group_by(Exam.exam).all()
+                else:
+                    searchText = "%" + searchText + "%"
+                    resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                        filter(and_(Program.sedeP.ilike(city),Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
 
 
+        if (len(resultList) ==0):
+            flash('Your search does not match any information. Please try again!', 'warning')
+            return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
+                                   searchMethod=searchMethod, city=city)
+        else:
 
 
-        print resultList
+            if (searchMethod == "Program"):
+                searchPageList = []
+                for x in resultList:
+                    searchPageList.append(x.courseName)
 
-        return render_template('searchPage.html', resultList = resultList, searchForm=searchForm2, searchMethod = searchMethod,city= city)
+                searchPageList.sort()
+                resultList = searchPageList
+
+            if (searchMethod == "Exam"):
+                searchPageList = []
+                for x in resultList:
+                    searchPageList.append(x.exam)
+
+                searchPageList.sort()
+                resultList = searchPageList
+
+
+            return render_template('searchPage.html', resultList = resultList, searchForm=searchForm2, searchMethod = searchMethod,city= city)
 
     return render_template('homePage.html', program=program, searchForm=searchForm)
 
