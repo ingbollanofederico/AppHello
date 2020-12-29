@@ -292,6 +292,13 @@
                                             city=city, academicDegree=academicDegree, exam=result.exam, university = university, program = program) }}" >{{result.display()}}</a>
                                         {% endif %}
 
+                                        {%if searchMethod == "EndSearch" %}
+                                            <p>{{university}}</p>
+                                            <p>{{program}}</p>
+                                            <p>{{exam}}</p>
+                                            <p>{{result.display()}}</p>
+                                        {% endif %}
+
                                     </div>
                                 </div>
 

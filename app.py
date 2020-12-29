@@ -211,8 +211,9 @@ def resultPage(searchMethod,city,academicDegree,university,program,exam):
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
 
-    '''query dive deep on university/course/exam + first 3 reviews'''
     resultList= []
+
+    '''query dive deep on university/course/exam + first 3 reviews'''
 
     '''1 giro'''
 
@@ -255,53 +256,59 @@ def resultPage(searchMethod,city,academicDegree,university,program,exam):
             searchMethod = "Program"
 
         # ''reviews exam'''
+    elif (university != "null" and program != "null" and exam == "null"):
+        if (city == "All"):
+            resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program), Program.idUniversity.ilike(university))).group_by(
+                Exam.exam).all()
+            searchMethod = "Exam"
+        else:
+            resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
+                filter(and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                            Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
+            searchMethod = "Exam"
 
+        # '''reviews program'''
+
+    elif (university == "null" and program != "null" and exam != "null"):
+        if (city == "All"):
+            resultList = University.query.join(
+                    Program, University.idUniversity == Program.idUniversity).join(
+                    Exam, Program.idProgram == Exam.idProgram).filter(
+                    and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program), Exam.exam.ilike(exam))).group_by(University.name).all()
+            searchMethod = "University"
+        else:
+            resultList = University.query.join(
+                Program, University.idUniversity == Program.idUniversity).join(
+                Exam, Program.idProgram == Exam.idProgram).filter(
+                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                     Exam.exam.ilike(exam))).group_by(University.name).all()
+            searchMethod = "University"
+        # ''reviews exam'''
+
+    elif (university != "null" and program != "null" and exam != "null"):
+        if (city == "All"):
+            resultList = University.query.join(
+                    Program, University.idUniversity == Program.idUniversity).join(
+                    Exam, Program.idProgram == Exam.idProgram).filter(
+                    and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program), Exam.exam.ilike(exam),Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
+            searchMethod = "EndSearch"
+        else:
+            resultList = University.query.join(
+                Program, University.idUniversity == Program.idUniversity).join(
+                Exam, Program.idProgram == Exam.idProgram).filter(
+                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                     Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
+            searchMethod = "EndSearch"
+        # ''reviews exam'''
     else:
         flash('Your search has been altered during your request! Please try to search it again.', 'warning')
 
-    '''
-    if (searchMethod == "Program"):
-        searchPageList = []
-        for x in resultList:
-            searchPageList.append(x.courseName)
+    if (len(resultList) == 0):
+        flash('Your search does not match any information. Please try again!', 'warning')
 
-        searchPageList.sort()
-        resultList = searchPageList
-
-    if (searchMethod == "Exam"):
-        searchPageList = []
-        for x in resultList:
-            searchPageList.append(x.exam)
-
-        searchPageList.sort()
-        resultList = searchPageList
-    '''
     return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod )
 
-
-    #'''null null exam'''
-       # '''to program'''
-        #''reviews exam'''
-
-
-    #'''2 giro'''
-
-    #'''university program null'''
-        # '''to exam'''
-        # '''reviews program'''
-
-    #'''university program null - INUTILE'''
-       # '''to exam'''
-        # '''reviews program'''
-
-    #'''null program exam'''
-       # '''to university'''
-        #''reviews exam'''
-
-    #'''3 giro'''
-
-    #'''university program exam'''
-        # '''reviews EXAM'''
 
 
 @app.errorhandler(404)
