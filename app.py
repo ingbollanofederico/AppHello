@@ -421,6 +421,32 @@ def exams():
 
     return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
 
+@app.route('/leaveReview', methods=['POST', 'GET'])
+def leaveReview():
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    return render_template('leaveReview.html', searchForm=searchForm)
+
+@app.route('/editProfile', methods=['POST', 'GET'])
+def editProfile():
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+
+    return render_template('editProfile.html', searchForm=searchForm)
+
+
+
+
 
 @app.errorhandler(404)
 def page_not_found(e):
