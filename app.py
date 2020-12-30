@@ -93,7 +93,6 @@ def searchFunction():
 
 def searchReviews(resultList,searchMethod):
 
-    searchMethod
 
     dictReviews = {}
 
@@ -106,9 +105,18 @@ def searchReviews(resultList,searchMethod):
             dictReviews[x.idUniversity] = reviewList
 
         elif (searchMethod == "Program"):
-            return
-        elif (searchMethod == "Exam"):
-            return
+
+            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University, University.idUniversity == Program.idUniversity). \
+                filter(Program.courseName.ilike(x.courseName)).order_by(Review.starRating).all()
+
+            dictReviews[x.courseName] = reviewList
+
+        elif (searchMethod == "Exam" or searchMethod == "EndSearch"):
+
+            reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program, Exam.idProgram == Program.idProgram).join(University, University.idUniversity == Program.idUniversity). \
+                filter(Exam.exam.ilike(x.exam)).order_by(Review.starRating).all()
+
+            dictReviews[x.exam] = reviewList
 
     return dictReviews
 
@@ -328,7 +336,12 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
     if (len(resultList) == 0):
         flash('Your search does not match any information. Please try again!', 'warning')
 
-    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod )
+    dictReviews = {}
+    dictReviews = searchReviews(resultList, searchMethod)
+
+    print dictReviews
+
+    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod, dictReviews = dictReviews )
 
 
 

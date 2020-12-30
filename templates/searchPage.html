@@ -1,7 +1,6 @@
 {% extends "Layout/layout.html" %}
 
 {% block main %}
-    #coding=utf-8
 
 <!-- TOPBAR - Included here for form purposes -->
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -291,6 +290,7 @@
             </div>
 
             <!-- Pie Chart -->
+
                         <div class="col-xl-4 col-lg-5">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
@@ -313,6 +313,7 @@
                                     </div>
                                 </div>
                                 <!-- Card Body -->
+
                                 <div class="card-body">
                                     <div class="chart-pie pt-4 pb-2">
                                         <canvas id="myPieChart"></canvas>
@@ -328,19 +329,29 @@
                                             <i class="fas fa-circle text-info"></i> Referral
                                         </span>
 
+                                    {%if searchMethod == "University" %}
                                         {% for reviews in dictReviews[result.idUniversity] %}
-                                             {%if searchMethod == "University" %}
-                                                 {{ reviews.review }}
-                                             {% endif %}
+                                            <p>{{ reviews.review }}</p>
+                                        {%  endfor %}
+                                    {% endif %}
 
-                                        {% endfor %}
+                                    {%if searchMethod == "Program" %}
+                                        {% for reviews in dictReviews[result.courseName] %}
+                                            <p>{{ reviews.review }}</p>
+                                        {%  endfor %}
+                                    {% endif %}
+
+                                    {%if searchMethod == "Exam" %}
+                                        {% for reviews in dictReviews[result.exam] %}
+                                            <p>{{ reviews.review }}</p>
+                                        {%  endfor %}
+                                    {% endif %}
+
                                     </div>
                                 </div>
+
                             </div>
                         </div>
-
-
-
 
         </div>
         {%  endfor %}
