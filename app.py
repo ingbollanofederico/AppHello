@@ -96,27 +96,44 @@ def searchReviews(resultList,searchMethod):
 
     dictReviews = {}
 
-    for x in resultList:
-        if (searchMethod == "University"):
+    if(searchMethod == "University" or searchMethod == "Program" or searchMethod == "Exam" or searchMethod == "EndSearch" ):
+        for x in resultList:
+            if (searchMethod == "University" ):
 
-            reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity).\
-                filter_by(idUniversity = x.idUniversity).order_by(Review.starRating).all()
+                reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity).\
+                    filter_by(idUniversity = x.idUniversity).order_by(Review.starRating).all()
 
-            dictReviews[x.idUniversity] = reviewList
+                dictReviews[x.idUniversity] = reviewList
 
-        elif (searchMethod == "Program"):
+            elif (searchMethod == "Program" ):
 
-            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University, University.idUniversity == Program.idUniversity). \
-                filter(Program.courseName.ilike(x.courseName)).order_by(Review.starRating).all()
+                reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University, University.idUniversity == Program.idUniversity). \
+                    filter(Program.courseName.ilike(x.courseName)).order_by(Review.starRating).all()
 
-            dictReviews[x.courseName] = reviewList
+                dictReviews[x.courseName] = reviewList
 
-        elif (searchMethod == "Exam" or searchMethod == "EndSearch"):
+            elif (searchMethod == "Exam" or searchMethod == "EndSearch"):
 
-            reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program, Exam.idProgram == Program.idProgram).join(University, University.idUniversity == Program.idUniversity). \
-                filter(Exam.exam.ilike(x.exam)).order_by(Review.starRating).all()
+                reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program, Exam.idProgram == Program.idProgram).join(University, University.idUniversity == Program.idUniversity). \
+                    filter(Exam.exam.ilike(x.exam)).order_by(Review.starRating).all()
 
-            dictReviews[x.exam] = reviewList
+                dictReviews[x.exam] = reviewList
+    else:
+        if (searchMethod == "EndSearchUniversity"):
+
+            reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity). \
+                filter_by(idUniversity=int(resultList)).order_by(Review.starRating).all()
+
+            dictReviews[resultList] = reviewList
+
+        elif (searchMethod == "EndSearchProgram"):
+
+            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
+                                                                                                University.idUniversity == Program.idUniversity). \
+                filter(Program.courseName.ilike(resultList)).order_by(Review.starRating).all()
+
+            dictReviews[resultList] = reviewList
+
 
     return dictReviews
 
@@ -312,20 +329,22 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
 
     elif (university != "null" and program != "null" and exam != "null"):
         if (city == "All"):
-            resultList = University.query.join(
-                Program, University.idUniversity == Program.idUniversity).join(
-                Exam, Program.idProgram == Exam.idProgram).filter(
+            resultList = Exam.query.join(
+                Program, Program.idProgram == Exam.idProgram).join(
+                University, University.idUniversity == Program.idUniversity).filter(
                 and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
                      Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
             searchMethod = "EndSearch"
+
         else:
-            resultList = University.query.join(
-                Program, University.idUniversity == Program.idUniversity).join(
-                Exam, Program.idProgram == Exam.idProgram).filter(
-                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
-                     Program.courseName.ilike(program),
+
+            resultList = Exam.query.join(
+                Program, Program.idProgram == Exam.idProgram).join(
+                University, University.idUniversity == Program.idUniversity).filter(
+                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
                      Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
             searchMethod = "EndSearch"
+
 
         # ''reviews exam'''
 
@@ -334,12 +353,18 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
         flash('Your search has been altered during your request! Please try to search it again.', 'warning')
 
     if (len(resultList) == 0):
-        flash('Your search does not match any information. Please try again!', 'warning')
+        if(searchMethod == "Program"):
+            resultList = university
+            searchMethod = "EndSearchUniversity"
+        if(searchMethod == "Exam"):
+            resultList = program
+            searchMethod = "EndSearchProgram"
 
     dictReviews = {}
     dictReviews = searchReviews(resultList, searchMethod)
 
     print dictReviews
+    print  searchMethod
 
     return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod, dictReviews = dictReviews )
 
