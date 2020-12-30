@@ -10,18 +10,17 @@ class Permissions (db.Model):
         return "<Role %r>" % self.name
 
 class University(db.Model):
-    idUniversity        = db.Column(db.Integer, primary_key=True)
-    name                = db.Column(db.String(200), nullable=False)
-    nickname            = db.Column(db.String(200), nullable=True)
-    state               = db.Column(db.String(200))
-    status              = db.Column(db.String(50))
-    type                = db.Column(db.String(50))
-    stataleLibera       = db.Column(db.String(50))
-    geogrZone           = db.Column(db.String(50))
-    address             = db.Column(db.String(50))
-    dean                = db.Column(db.String(50))
-    website             = db.Column(db.String(50))
-    numberOfStudents    = db.Column(db.Integer)
+    idUniversity = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(200), nullable=False)
+    nickname = db.Column(db.String(200), nullable=False)
+    state = db.Column(db.String(200))
+    region = db.Column(db.String(50))
+    staticLogo = db.Column(db.String(400))
+    website = db.Column(db.String(200))
+    address = db.Column(db.String(50))
+    Cap = db.Column(db.String(50))
+    Tel = db.Column(db.String(50))
+    Fax = db.Column(db.Integer)
 
     reviews             = db.relationship('Review', backref='university')
     programs            = db.relationship('Program', backref='university')
@@ -82,6 +81,7 @@ class Review (db.Model):
     idExam              = db.Column(db.Integer, db.ForeignKey('exam.idExam'), nullable=True)
     review              = db.Column(db.String(400),unique=True,nullable=False)
     timeStamp           = db.Column(db.DateTime, nullable =False)
+    starRating          = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
         return "<Review %r>" % self.idReview, self.review

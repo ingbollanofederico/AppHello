@@ -198,9 +198,14 @@ figure {
   margin: 0 0 1rem;
 }
 
-img {
-  vertical-align: middle;
-  border-style: none;
+img.logo {vertical-align: top; horiz-align: left;
+  adding: 0.25rem;
+  background-color: #fff;
+  border: 2px solid #4e73df;
+  padding: 8px 8px 8px 8px;
+  border-radius: 0.2rem;
+  max-width: 150px;
+  max-height: 150px;
 }
 
 svg {
