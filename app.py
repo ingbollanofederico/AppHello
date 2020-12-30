@@ -59,7 +59,7 @@ class User (db.Model):
         return "<User %r>" % self.firstName
 
 
-from model import Permissions, Program, University, Exam
+from model import Permissions, Program, University, Exam, Review
 from form import formRegistration, loginForm, forgotPassword, formSearch
 
 
@@ -91,6 +91,29 @@ def searchFunction():
 
     return searchForm
 
+def searchReviews(resultList,searchMethod):
+
+    searchMethod
+
+    dictReviews = {}
+
+    for x in resultList:
+        if (searchMethod == "University"):
+
+            reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity).\
+                filter_by(idUniversity = x.idUniversity).order_by(Review.starRating).all()
+
+            dictReviews[x.idUniversity] = reviewList
+
+        elif (searchMethod == "Program"):
+            return
+        elif (searchMethod == "Exam"):
+            return
+
+    return dictReviews
+
+
+
 def searchValidator(searchForm):
     searchMethod = searchForm.searchMethod.data
     city = searchForm.city.data
@@ -103,7 +126,10 @@ def searchValidator(searchForm):
     if (city == "All"):
         if (searchMethod == "University"):
             if (searchText == ""):
+                #search result
                 resultList = University.query.order_by(University.name).all()
+                #review
+
             else:
                 searchText = "%" + searchText + "%"
                 resultList = University.query.filter(
@@ -166,9 +192,13 @@ def searchValidator(searchForm):
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
                                searchMethod=searchMethod, city=city, acedemicDegree=academicDegree)
     else:
+        dictReviews = {}
+        dictReviews = searchReviews(resultList, searchMethod)
+
+        print dictReviews
 
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2, city=city,
-                               academicDegree=academicDegree, searchMethod=searchMethod)
+                               academicDegree=academicDegree, searchMethod=searchMethod, dictReviews = dictReviews)
 
 
 @app.route('/homePage', methods=['POST','GET'])

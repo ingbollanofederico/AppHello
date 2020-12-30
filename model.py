@@ -1,6 +1,7 @@
 from app import db
 
 
+
 class Permissions (db.Model):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(200),unique=True,nullable=False)
@@ -79,12 +80,13 @@ class Review (db.Model):
     idUniversity        = db.Column(db.Integer, db.ForeignKey('university.idUniversity'), nullable=False)
     idProgram           = db.Column(db.Integer, db.ForeignKey('program.idProgram'), nullable=True)
     idExam              = db.Column(db.Integer, db.ForeignKey('exam.idExam'), nullable=True)
-    review              = db.Column(db.String(400),unique=True,nullable=False)
-    timeStamp           = db.Column(db.DateTime, nullable =False)
+    reviewTitle         = db.Column(db.String(200), nullable=False)
+    review              = db.Column(db.String(400), nullable=False)
+    timeStamp           = db.Column(db.String(50))
     starRating          = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
-        return "<Review %r>" % self.idReview, self.review
+        return "Review %s - %s" % (self.reviewTitle, self.review)
 
     def display(self):
         return "%s " % self.review

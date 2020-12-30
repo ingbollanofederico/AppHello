@@ -1,6 +1,7 @@
 {% extends "Layout/layout.html" %}
 
 {% block main %}
+    #coding=utf-8
 
 <!-- TOPBAR - Included here for form purposes -->
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
@@ -326,6 +327,13 @@
                                         <span class="mr-2">
                                             <i class="fas fa-circle text-info"></i> Referral
                                         </span>
+
+                                        {% for reviews in dictReviews[result.idUniversity] %}
+                                             {%if searchMethod == "University" %}
+                                                 {{ reviews.review }}
+                                             {% endif %}
+
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
