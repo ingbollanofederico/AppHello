@@ -237,7 +237,7 @@
       </div>
 
 
-     <!-- Result Oage dynamic results -->
+     <!-- Result <Page dynamic results -->
                 {% if searchMethod == "University" or searchMethod == "Program" or searchMethod == "Exam"  %}
                     {% for result in resultList %}
                     <div class="row">
@@ -419,8 +419,10 @@
                                             <p>{{exam}}</p>
                                             <p>{{resultList.exam}}</p>
                                         {% endif %}
-
-                                    </div>
+                                     <!-- leave review button -->
+                                    <a href="{{ url_for('leaveReview',
+                                         city=city, academicDegree=academicDegree, university=university, program=program, exam = exam) }}" > leave review</a>
+                                  </div>
                                 </div>
 
                             </div>

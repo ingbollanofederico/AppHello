@@ -56,3 +56,9 @@ class formSearch (FlaskForm):
     searchText = StringField('University, Degree Course, Exam')
 
     submit = SubmitField('Search')
+
+class formReview(FlaskForm):
+
+    Review = StringField('University, Degree Course, Exam')
+
+    submit = SubmitField('Leave a Review')

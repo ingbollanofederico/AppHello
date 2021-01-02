@@ -269,7 +269,9 @@
                         {%if searchMethod == "University" %}
 
                             <a href="{{ url_for('resultPage', searchMethod=searchMethod,
-                            city=city, academicDegree=academicDegree, university=result.idUniversity, program="null", exam = "null") }}" ><img class="logo" src="{{result.staticLogo}}">{{result.display()}}</a>
+                            city=city, academicDegree=academicDegree, university=result.idUniversity, program="null", exam = "null") }}" >
+                                <img class="logo" src="{{result.staticLogo}}">{{result.display()}}</a>
+                                <button class="btn btn-primary"></button>
 
                         {% endif %}
 

@@ -60,7 +60,7 @@ class User (db.Model):
 
 
 from model import Permissions, Program, University, Exam, Review
-from form import formRegistration, loginForm, forgotPassword, formSearch
+from form import formRegistration, loginForm, forgotPassword, formSearch, formReview
 
 
 @app.route('/')
@@ -90,6 +90,12 @@ def searchFunction():
     searchForm.city.choices = myCities
 
     return searchForm
+
+def reviewFunction():
+
+    reviewForm=formReview()
+
+    return reviewForm
 
 def searchReviews(resultList,searchMethod):
 
@@ -224,7 +230,6 @@ def searchValidator(searchForm):
 
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2, city=city,
                                academicDegree=academicDegree, searchMethod=searchMethod, dictReviews = dictReviews)
-
 
 @app.route('/homePage', methods=['POST','GET'])
 def homePage():
@@ -364,12 +369,9 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
     dictReviews = searchReviews(resultList, searchMethod)
 
     print dictReviews
-    print  searchMethod
+    print searchMethod
 
     return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod, dictReviews = dictReviews )
-
-
-
 
 @app.route('/resultPage/<searchMethod>/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
 def resultPage(searchMethod,city,academicDegree,university,program,exam):
@@ -382,7 +384,6 @@ def resultPage(searchMethod,city,academicDegree,university,program,exam):
 
     return resultValidator(searchForm,searchMethod,city,academicDegree,university,program,exam)
 
-
 @app.route('/universities', methods=['POST', 'GET'])
 def universities():
     university = University.query.order_by(University.name).all()
@@ -394,8 +395,6 @@ def universities():
         return searchValidator(searchForm)
 
     return render_template('infoPage.html', university=university, searchForm=searchForm, element="university")
-
-
 
 @app.route('/programs', methods=['POST', 'GET'])
 def programs():
@@ -421,17 +420,6 @@ def exams():
 
     return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
 
-@app.route('/leaveReview', methods=['POST', 'GET'])
-def leaveReview():
-
-    '''Search Function'''
-    searchForm = searchFunction()
-
-    if searchForm.validate_on_submit():
-        return searchValidator(searchForm)
-
-    return render_template('leaveReview.html', searchForm=searchForm)
-
 @app.route('/editProfile', methods=['POST', 'GET'])
 def editProfile():
 
@@ -445,7 +433,27 @@ def editProfile():
     return render_template('editProfile.html', searchForm=searchForm)
 
 
+def reviewValidator(reviewForm):
 
+    return render_template('resultPage.html')
+
+@app.route('/leaveReview/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
+def leaveReview(city,academicDegree,university,program,exam):
+
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    '''review Function'''
+    reviewForm = reviewFunction()
+
+    if reviewForm.validate_on_submit():
+        return reviewValidator(reviewForm)
+
+    return render_template('leaveReview.html', reviewForm=reviewForm, searchForm=searchForm)
 
 
 @app.errorhandler(404)
