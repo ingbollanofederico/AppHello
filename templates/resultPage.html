@@ -224,6 +224,7 @@
 
      <div class="container-fluid">
 
+     <!-- Flash message -->
      <div><br>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -237,7 +238,219 @@
       </div>
 
 
-     <!-- Result <Page dynamic results -->
+     <!-- Result Page - Information regarding the choice made -->
+     <div>
+         <div class="row">
+            <div class="col-xl-12 col-lg-7">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                    <div style="display: flex">
+                        {%if university_object != "null" %}
+                            <div class="col-xl-2 col-lg-7">
+                                <p><img class="logo" src="{{university_object[0].staticLogo}}"></p>
+                                {%if exam != "null" %}
+                                    <p style="font-style: italic; font-size: smaller">Focus Choice: Exam</p>
+                                {%elif program != "null" %}
+                                    <p style="font-style: italic; font-size: smaller">Focus Choice: Program</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-xl-5 col-lg-7">
+
+                                 <p style="font-style: italic; font-weight: bold; font-size: larger"> {{ university_object[0].name }}</p>
+
+                                    {%if program != "null" %}
+                                        <p style="font-style: italic; font-weight: bold; font-size: smaller">{{ program }}</p>
+
+                                        {%if exam != "null" %}
+                                            <p style="font-style: italic; font-weight: bold; font-size: smaller">{{ exam }}</p>
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                    {%if program == "null" %}
+                                        {%if exam != "null" %}
+                                            <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ exam }}</p>
+                                            <p style="font-style: italic; font-size: medium; text-align: center">(EXAM)</p>
+                                        {% endif %}
+                                    {% endif %}
+
+                                {% if university_object[0].state != None %}
+                                    <p>State: {{ university_object[0].state }}</p>
+                                {% endif %}
+                                {% if university_object[0].state == None %}
+                                    <p>State: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].region != None %}
+                                    <p>Region: {{ university_object[0].region }}</p>
+                                {% endif %}
+                                {% if university_object[0].region == None %}
+                                    <p>Region: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].address != None %}
+                                    <p>Address: {{ university_object[0].address }}</p>
+                                {% endif %}
+                                {% if university_object[0].address == None %}
+                                    <p>Address: Information Not Available</p>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-xl-5 col-lg-7">
+
+                                {% if university_object[0].Cap != None %}
+                                    <p>CAP: {{ university_object[0].Cap }}</p>
+                                {% endif %}
+                                {% if university_object[0].Cap == None %}
+                                    <p>CAP: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].Tel != None %}
+                                    <p>{{ university_object[0].Tel }}</p>
+                                {% endif %}
+                                {% if university_object[0].Tel == None %}
+                                    <p>Tel: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].Fax != None %}
+                                    <p> {{ university_object[0].Fax }}</p>
+                                {% endif %}
+                                {% if university_object[0].Fax == None %}
+                                    <p>FAX: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].website != None %}
+                                    <a href="{{ university_object[0].website }}">Website</a>
+                                {% endif %}
+                                {% if university_object[0].website == None %}
+                                    <p>Website: Information Not Available</p>
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+
+                        {%if university == "null" %}
+                            {%if program != "null" %}
+                                <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ program }}</p>
+
+                                {%if exam != "null" %}
+                                    <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ exam }}</p>
+                                    <p style="font-style: italic; font-size: medium; text-align: center">(EXAM)</p>
+                                {% endif %}
+
+                                {%if exam == "null" %}
+                                    <p style="font-style: italic; font-size: medium; text-align: center">(Degree Course)</p>
+                                {% endif %}
+                            {% endif %}
+
+                            {%if program == "null" %}
+                                {%if exam != "null" %}
+                                    <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ exam }}</p>
+                                    <p style="font-style: italic; font-size: medium; text-align: center">(EXAM)</p>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+     </div>
+
+
+     <!-- Result Page - Reviews of the choice made -->
+     <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">{{numberOfReviews }} Student Reviews</h6>
+                </div>
+                <div class="card-body">
+                {% for result in resultList %}
+                    {%if searchMethod == "University" %}
+                        {% for reviews in dictReviews[result.idUniversity][:5] %}
+                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {%  endfor %}
+                    {% endif %}
+
+                    {%if searchMethod == "Program"  %}
+                        {% for reviews in dictReviews[result.courseName][:5] %}
+                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {%  endfor %}
+                    {% endif %}
+
+                    {%if searchMethod == "Exam"  %}
+                        {% for reviews in dictReviews[result.exam][:5] %}
+                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {%  endfor %}
+                    {% endif %}
+                {%  endfor %}
+
+                 {%if searchMethod == "EndSearchUniversity"%}
+                    {% for reviews in dictReviews[resultList][:5] %}
+                        <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                    {%  endfor %}
+                     <button data-toggle="collapse" data-target="#demo">Show more</button>
+                            <div id="demo" class="collapse"><br>
+                                {% for reviews in dictReviews[resultList][6:] %}
+                                    <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                                {%  endfor %}
+                            </div>
+                {% endif %}
+
+                {%if searchMethod == "EndSearchProgram" %}
+                    {% for reviews in dictReviews[resultList][:5] %}
+                        <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                    {%  endfor %}
+                    <button data-toggle="collapse" data-target="#demo">Show more</button>
+                            <div id="demo" class="collapse"><br>
+                                {% for reviews in dictReviews[resultList][6:] %}
+                                    <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                                {%  endfor %}
+                            </div>
+                {% endif %}
+
+                {%if searchMethod == "EndSearch"  %}
+                    {% for result in resultList %}
+                        {% for reviews in dictReviews[result.exam][:5] %}
+                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {%  endfor %}
+                        <button data-toggle="collapse" data-target="#demo">Show more</button>
+                            <div id="demo" class="collapse"><br>
+                                {% for reviews in dictReviews[result.exam][6:] %}
+                                    <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                                {%  endfor %}
+                            </div>
+                    {%  endfor %}
+                {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Ratings</h6>
+                </div>
+                <div class="card-body">
+                <p>Paperino</p>
+                </div>
+            </div>
+        </div>
+
+
+
+     </div>
+
+
+     <!-- Dynamic results of possible other choices -->
+     <div>
                 {% if searchMethod == "University" or searchMethod == "Program" or searchMethod == "Exam"  %}
                     {% for result in resultList %}
                     <div class="row">
@@ -364,9 +577,12 @@
                         </div>
 
                     </div>
-                    {%  endfor %}
+     {%  endfor %}
                 {% endif %}
+     </div>
 
+     <!-- Static results of no other choices -->
+     <div>
                 {% if searchMethod == "EndSearch" or searchMethod == "EndSearchUniversity" or searchMethod == "EndSearchProgram"  %}
                     <div class="row">
                         <!-- Area -->
@@ -481,8 +697,10 @@
                                     {% endif %}
 
                                     {%if searchMethod == "EndSearch"  %}
-                                        {% for reviews in dictReviews[resultList] %}
-                                            <p>{{ reviews.review }}</p>
+                                        {% for result in resultList %}
+                                            {% for reviews in dictReviews[result.exam] %}
+                                                <p>{{ reviews.review }}</p>
+                                            {%  endfor %}
                                         {%  endfor %}
                                     {% endif %}
 
@@ -494,6 +712,7 @@
 
                     </div>
                 {% endif %}
+        </div>
 
      </div>
 

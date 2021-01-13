@@ -597,6 +597,11 @@ pre code {
   margin-left: -0.75rem;
 }
 
+.row-result {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .no-gutters {
   margin-right: 0;
   margin-left: 0;

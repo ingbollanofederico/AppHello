@@ -82,7 +82,7 @@ class Review (db.Model):
     idExam              = db.Column(db.Integer, db.ForeignKey('exam.idExam'), nullable=True)
     reviewTitle         = db.Column(db.String(200), nullable=False)
     review              = db.Column(db.String(400), nullable=False)
-    timeStamp           = db.Column(db.String(50))
+    timeStamp           = db.Column(db.DateTime)
     starRating          = db.Column(db.Float, nullable=False)
 
     def __repr__(self):
