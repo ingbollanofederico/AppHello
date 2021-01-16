@@ -206,10 +206,109 @@ def searchValidator(searchForm):
 
                     dictReviews[x.exam] = reviewList
 
+        numberOfReviews = 0
+        dictRatingReviews = {}
+
+        if (searchMethod == "University"):
+            for result in resultList:
+                numberOfReviews = len(dictReviews[result.idUniversity])
+                averageValue = 0
+                star1=0.0
+                star2=0.0
+                star3=0.0
+                star4=0.0
+                star5=0.0
+                for review in dictReviews[result.idUniversity]:
+                    averageValue = averageValue + review.starRating
+                    if(review.starRating<=1):
+                        star1 = star1 + 1
+                    elif(review.starRating> 1 and review.starRating<=2):
+                        star2 = star2 + 1
+                    elif (review.starRating> 2 and review.starRating<=3):
+                        star3 = star3 + 1
+                    elif (review.starRating> 3 and review.starRating<=4):
+                        star4 = star4 + 1
+                    elif (review.starRating> 4 and review.starRating<=5):
+                        star5 = star5 + 1
+
+                if averageValue>0:
+                    averageValue = averageValue/numberOfReviews
+                    star1 = (star1/numberOfReviews)*100
+                    star2 = (star2/numberOfReviews)*100
+                    star3 = (star3/numberOfReviews)*100
+                    star4 = (star4/numberOfReviews)*100
+                    star5 = (star5/numberOfReviews)*100
+
+
+                dictRatingReviews[result.idUniversity] = [round(averageValue,2),numberOfReviews, star1, star2, star3,star4,star5]
+
+        elif (searchMethod == "Program"):
+            for result in resultList:
+                numberOfReviews = len(dictReviews[result.courseName])
+                averageValue = 0
+                star1 = 0.0
+                star2 = 0.0
+                star3 = 0.0
+                star4 = 0.0
+                star5 = 0.0
+                for review in dictReviews[result.courseName]:
+                    averageValue = averageValue + review.starRating
+                    if (review.starRating <= 1):
+                        star1 = star1 + 1
+                    elif (review.starRating > 1 and review.starRating <= 2):
+                        star2 = star2 + 1
+                    elif (review.starRating > 2 and review.starRating <= 3):
+                        star3 = star3 + 1
+                    elif (review.starRating > 3 and review.starRating <= 4):
+                        star4 = star4 + 1
+                    elif (review.starRating > 4 and review.starRating <= 5):
+                        star5 = star5 + 1
+
+                if averageValue>0:
+                    averageValue = averageValue/numberOfReviews
+                    star1 = (star1 / numberOfReviews) * 100
+                    star2 = (star2 / numberOfReviews) * 100
+                    star3 = (star3 / numberOfReviews) * 100
+                    star4 = (star4 / numberOfReviews) * 100
+                    star5 = (star5 / numberOfReviews) * 100
+
+                dictRatingReviews[result.courseName] = [round(averageValue,2),numberOfReviews, star1, star2, star3,star4,star5]
+
+        elif (searchMethod == "Exam"):
+            for result in resultList:
+                numberOfReviews = len(dictReviews[result.exam])
+                averageValue = 0
+                star1 = 0.0
+                star2 = 0.0
+                star3 = 0.0
+                star4 = 0.0
+                star5 = 0.0
+                for review in dictReviews[result.exam]:
+                    averageValue = averageValue + review.starRating
+                    if (review.starRating <= 1):
+                        star1 = star1 + 1
+                    elif (review.starRating > 1 and review.starRating <= 2):
+                        star2 = star2 + 1
+                    elif (review.starRating > 2 and review.starRating <= 3):
+                        star3 = star3 + 1
+                    elif (review.starRating > 3 and review.starRating <= 4):
+                        star4 = star4 + 1
+                    elif (review.starRating > 4 and review.starRating <= 5):
+                        star5 = star5 + 1
+
+                if averageValue>0:
+                    averageValue = averageValue/numberOfReviews
+                    star1 = (star1 / numberOfReviews) * 100
+                    star2 = (star2 / numberOfReviews) * 100
+                    star3 = (star3 / numberOfReviews) * 100
+                    star4 = (star4 / numberOfReviews) * 100
+                    star5 = (star5 / numberOfReviews) * 100
+
+                dictRatingReviews[result.exam] = [round(averageValue,2),numberOfReviews, star1, star2, star3,star4,star5]
 
 
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2, city=city,
-                               academicDegree=academicDegree, searchMethod=searchMethod, dictReviews = dictReviews)
+                               academicDegree=academicDegree, searchMethod=searchMethod, dictReviews = dictReviews, dictRatingReviews = dictRatingReviews)
 
 @app.route('/homePage', methods=['POST','GET'])
 def homePage():
@@ -404,28 +503,179 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
             dictReviews[program] = reviewList
             searchMethod = "EndSearchProgram"
 
-
-
     numberOfReviews = 0
+    RatingReviews = []
 
-    if (searchMethod == "EndSearchUniversity" or searchMethod == "EndSearchProgram" ):
-        numberOfReviews = len(dictReviews[resultList])
-    else:
-        if (searchMethod == "University"):
-            for result in resultList:
-                numberOfReviews = numberOfReviews+ len(dictReviews[result.idUniversity])
-        elif(searchMethod == "Program"):
-            for result in resultList:
-                numberOfReviews = numberOfReviews+ len(dictReviews[result.courseName])
-        elif(searchMethod == "Exam" or searchMethod == "EndSearch"):
-            for result in resultList:
-                numberOfReviews = numberOfReviews+ len(dictReviews[result.exam])
+    if (searchMethod == "University"):
+        numberOfReviews = 0
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for result in resultList:
+            #overall rew
+            numberOfReviews = numberOfReviews+len(dictReviews[result.idUniversity])
+            for review in dictReviews[result.idUniversity]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
+
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3,
+                                                  star4, star5]
+
+    elif (searchMethod == "Program"):
+        numberOfReviews=0
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for result in resultList:
+            numberOfReviews = numberOfReviews+len(dictReviews[result.courseName])
+            for review in dictReviews[result.courseName]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                                                star5]
+
+    elif (searchMethod == "Exam" or searchMethod == "EndSearch"):
+        numberOfReviews = 0
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for result in resultList:
+            numberOfReviews = numberOfReviews+len(dictReviews[result.exam])
+            for review in dictReviews[result.exam]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                                          star5]
+
+    elif (searchMethod == "EndSearchUniversity"):
+            numberOfReviews = len(dictReviews[university])
+            averageValue = 0
+            star1 = 0.0
+            star2 = 0.0
+            star3 = 0.0
+            star4 = 0.0
+            star5 = 0.0
+            for review in dictReviews[university]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
+
+            if averageValue > 0:
+                averageValue = averageValue / numberOfReviews
+                star1 = (star1 / numberOfReviews) * 100
+                star2 = (star2 / numberOfReviews) * 100
+                star3 = (star3 / numberOfReviews) * 100
+                star4 = (star4 / numberOfReviews) * 100
+                star5 = (star5 / numberOfReviews) * 100
+
+            RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                             star5]
+    elif (searchMethod == "EndSearchProgram"):
+        numberOfReviews = len(dictReviews[program])
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for review in dictReviews[program]:
+            averageValue = averageValue + review.starRating
+            if (review.starRating <= 1):
+                star1 = star1 + 1
+            elif (review.starRating > 1 and review.starRating <= 2):
+                star2 = star2 + 1
+            elif (review.starRating > 2 and review.starRating <= 3):
+                star3 = star3 + 1
+            elif (review.starRating > 3 and review.starRating <= 4):
+                star4 = star4 + 1
+            elif (review.starRating > 4 and review.starRating <= 5):
+                star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                         star5]
 
 
 
-
-
-    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod, dictReviews = dictReviews, university_object =university_object, numberOfReviews=numberOfReviews )
+    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod, dictReviews = dictReviews, university_object =university_object, numberOfReviews=numberOfReviews, RatingReviews = RatingReviews)
 
 @app.route('/resultPage/<searchMethod>/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
 def resultPage(searchMethod,city,academicDegree,university,program,exam):

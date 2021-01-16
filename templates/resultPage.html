@@ -372,46 +372,450 @@
                     <h6 class="m-0 font-weight-bold text-primary">{{numberOfReviews }} Student Reviews</h6>
                 </div>
                 <div class="card-body">
-                {% for result in resultList %}
+
                     {%if searchMethod == "University" %}
-                        {% for reviews in dictReviews[result.idUniversity][:5] %}
-                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {% for result in resultList %}
+                            {% for reviews in dictReviews[result.idUniversity][:5] %}
+
+                                <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                </div>
+                            {%  endfor %}
                         {%  endfor %}
+                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                            <div id="demo" class="collapse"><br>
+                            {% for result in resultList %}
+                                {% for reviews in dictReviews[result.idUniversity][5:] %}
+
+                                    <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
+                                {%  endfor %}
+                            {%  endfor %}
+                            </div>
                     {% endif %}
 
                     {%if searchMethod == "Program"  %}
-                        {% for reviews in dictReviews[result.courseName][:5] %}
-                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {% for result in resultList %}
+                            {% for reviews in dictReviews[result.courseName][:5] %}
+                                <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                </div>
+                            {%  endfor %}
                         {%  endfor %}
+                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                            <div id="demo" class="collapse"><br>
+                            {% for result in resultList %}
+                                {% for reviews in dictReviews[result.courseName][5:] %}
+
+                                    <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
+                                {%  endfor %}
+                            {%  endfor %}
+                            </div>
                     {% endif %}
 
                     {%if searchMethod == "Exam"  %}
-                        {% for reviews in dictReviews[result.exam][:5] %}
-                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        {% for result in resultList %}
+                            {% for reviews in dictReviews[result.exam][:5] %}
+
+                                <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
+                            {%  endfor %}
                         {%  endfor %}
+                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                            <div id="demo" class="collapse"><br>
+                            {% for result in resultList %}
+                                {% for reviews in dictReviews[result.exam][5:] %}
+                                    <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
+                                {%  endfor %}
+                            {%  endfor %}
+                            </div>
                     {% endif %}
-                {%  endfor %}
+
 
                  {%if searchMethod == "EndSearchUniversity"%}
                     {% for reviews in dictReviews[resultList][:5] %}
-                        <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
                     {%  endfor %}
-                     <button data-toggle="collapse" data-target="#demo">Show more</button>
+                     <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
                             <div id="demo" class="collapse"><br>
-                                {% for reviews in dictReviews[resultList][6:] %}
-                                    <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                                {% for reviews in dictReviews[resultList][5:] %}
+                                    <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
                                 {%  endfor %}
                             </div>
                 {% endif %}
 
                 {%if searchMethod == "EndSearchProgram" %}
                     {% for reviews in dictReviews[resultList][:5] %}
-                        <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                        <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
                     {%  endfor %}
-                    <button data-toggle="collapse" data-target="#demo">Show more</button>
+                    <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
                             <div id="demo" class="collapse"><br>
-                                {% for reviews in dictReviews[resultList][6:] %}
-                                    <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                                {% for reviews in dictReviews[resultList][5:] %}
+                                    <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
                                 {%  endfor %}
                             </div>
                 {% endif %}
@@ -419,12 +823,86 @@
                 {%if searchMethod == "EndSearch"  %}
                     {% for result in resultList %}
                         {% for reviews in dictReviews[result.exam][:5] %}
-                            <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                            <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
                         {%  endfor %}
-                        <button data-toggle="collapse" data-target="#demo">Show more</button>
+                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
                             <div id="demo" class="collapse"><br>
-                                {% for reviews in dictReviews[result.exam][6:] %}
-                                    <p>{{ reviews.review }} {{ reviews.starRating }} {{ reviews.timeStamp }}</p>
+                                {% for reviews in dictReviews[result.exam][5:] %}
+                                    <div class="row">
+                                    <div class="col-xl-2 col-lg-7">
+                                        <div class="card-body">
+                                            <img class="img-profile rounded-circle" style="width: 80px; height: 80px"
+                                                 src="{{ url_for('static',filename='img/undraw_profile.svg') }}">
+                                         </div>
+
+                                    </div>
+
+                                    <div class="col-xl-10 col-lg-7">
+                                        <div style="font-weight: bold"> {{ reviews.reviewTitle }}
+                                            {% if reviews.starRating<=1 %}
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=2 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=3 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=4 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% elif reviews.starRating<=5 %}
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                            {% endif %}
+                                        </div>
+
+                                        <p>{{ reviews.timeStamp }}</p>
+                                        <p>{{ reviews.review }}</p>
+                                    </div>
+                                    </div>
                                 {%  endfor %}
                             </div>
                     {%  endfor %}
@@ -432,17 +910,227 @@
                 </div>
             </div>
         </div>
-
         <div class="col-xl-4 col-lg-5">
             <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Ratings</h6>
-                </div>
-                <div class="card-body">
-                <p>Paperino</p>
-                </div>
-            </div>
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Star Ratings</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                            aria-labelledby="dropdownMenuLink">
+                                            <div class="dropdown-header">Dropdown Header:</div>
+                                            <a class="dropdown-item" href="#">Action</a>
+                                            <a class="dropdown-item" href="#">Another action</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#">Something else here</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- Card Body -->
+
+                                <div class="card-body">
+
+
+                                    <div class="row">
+                                        <div class="col-xs-12 col-md-6 text-center">
+                                            <div style="height: 138px">
+                                            <h1 class="rating-num">
+
+                                                 {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                        <p>{{ RatingReviews[0]}}</p>
+                                                {% endif %}
+
+                                                {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                        <p>{{RatingReviews[0]}}</p>
+                                                {% endif %}
+
+                                                {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                        <p>{{ RatingReviews[0]}}</p>
+                                                {% endif %}
+
+                                            </h1>
+                                            <div class="rating">
+                                                <span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star">
+                                                </span><span class="glyphicon glyphicon-star"></span><span class="glyphicon glyphicon-star">
+                                                </span><span class="glyphicon glyphicon-star-empty"></span>
+                                            </div>
+                                            <div>
+                                                <span class="glyphicon glyphicon-user"></span>
+
+                                                {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                        <p>{{ RatingReviews[1]}} Total Reviews</p>
+                                                {% endif %}
+
+                                                {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                        <p>{{ RatingReviews[1]}} Total Reviews</p>
+                                                {% endif %}
+
+                                                {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                        <p>{{ RatingReviews[1]}} Total Reviews</p>
+                                                {% endif %}
+
+                                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6">
+                                            <div class="row rating-desc">
+                                                <div class="col-xs-3 col-md-3 text-right">
+                                                    <span class="glyphicon glyphicon-star"></span>5
+                                                </div>
+                                                <div class="col-xs-8 col-md-9">
+                                                    <div class="progress progress-striped">
+                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20"
+                                                            aria-valuemin="0" aria-valuemax="100" style="width:
+
+                                                            {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                                    {{ RatingReviews[6]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                                    {{ RatingReviews[6]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                                    {{ RatingReviews[6]}}%
+                                                            {% endif %}
+
+                                                                ">
+                                                            <span class="sr-only">80%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end 5 -->
+                                                <div class="col-xs-3 col-md-3 text-right">
+                                                    <span class="glyphicon glyphicon-star"></span>4
+                                                </div>
+                                                <div class="col-xs-8 col-md-9">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="20"
+                                                            aria-valuemin="0" aria-valuemax="100" style="width:
+
+                                                            {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                                    {{ RatingReviews[5]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                                    {{ RatingReviews[5]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                                    {{ RatingReviews[5]}}%
+                                                            {% endif %}
+
+
+                                                            ">
+                                                            <span class="sr-only">60%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end 4 -->
+                                                <div class="col-xs-3 col-md-3 text-right">
+                                                    <span class="glyphicon glyphicon-star"></span>3
+                                                </div>
+                                                <div class="col-xs-8 col-md-9">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20"
+                                                            aria-valuemin="0" aria-valuemax="100" style="width:
+
+                                                            {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                                    {{ RatingReviews[4]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                                    {{ RatingReviews[4]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                                    {{ RatingReviews[4]}}%
+                                                            {% endif %}
+
+
+
+                                                            ">
+                                                            <span class="sr-only">40%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end 3 -->
+                                                <div class="col-xs-3 col-md-3 text-right">
+                                                    <span class="glyphicon glyphicon-star"></span>2
+                                                </div>
+                                                <div class="col-xs-8 col-md-9">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="20"
+                                                            aria-valuemin="0" aria-valuemax="100" style="width:
+
+                                                            {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                                    {{ RatingReviews[3]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                                    {{ RatingReviews[3]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                                    {{ RatingReviews[3]}}%
+                                                            {% endif %}
+
+
+                                                            ">
+                                                            <span class="sr-only">20%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end 2 -->
+                                                <div class="col-xs-3 col-md-3 text-right">
+                                                    <span class="glyphicon glyphicon-star"></span>1
+                                                </div>
+                                                <div class="col-xs-8 col-md-9">
+                                                    <div class="progress">
+                                                        <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80"
+                                                            aria-valuemin="0" aria-valuemax="100" style="width:
+
+                                                            {%if searchMethod == "University" or searchMethod =="EndSearchUniversity"%}
+                                                                    {{ RatingReviews[2]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Program" or searchMethod == "EndSearchProgram"%}
+                                                                    {{ RatingReviews[2]}}%
+                                                            {% endif %}
+
+                                                            {%if searchMethod == "Exam" or searchMethod == "EndSearch"%}
+                                                                    {{ RatingReviews[2]}}%
+                                                            {% endif %}
+
+
+
+
+                                                            %">
+                                                            <span class="sr-only">15%</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- end 1 -->
+
+                                            </div>
+                                            <!-- end row -->
+                                        </div>
+                                        <button class="btn btn-primary btn-user btn-block">Leave Review</button>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
         </div>
+
 
 
 
@@ -451,11 +1139,10 @@
 
      <!-- Dynamic results of possible other choices -->
      <div>
-                {% if searchMethod == "University" or searchMethod == "Program" or searchMethod == "Exam"  %}
-                    {% for result in resultList %}
+     {% if searchMethod == "University" or searchMethod == "Program" or searchMethod == "Exam"  %}
                     <div class="row">
                         <!-- Area -->
-                        <div class="col-xl-8 col-lg-7">
+                        <div class="col-xl-12 col-lg-7">
                             <div class="card shadow mb-4">
 
                                 <!-- Card Header - Dropdown -->
@@ -482,235 +1169,46 @@
                                 <!-- Card Body -->
                                 <div class="card-body">
                                     <div class="card-body">
+
+
+                                        {% for result in resultList %}
+
+
                                         {%if searchMethod == "University" %}
-                                            <p>{{university}}</p>
-                                            <p>{{program}}</p>
-                                            <p>{{exam}}</p>
-                                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
-                                            city=city, academicDegree=academicDegree, university=result.idUniversity, program=program, exam = exam) }}" >{{result.display()}}</a>
+                                            <p><a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            city=city, academicDegree=academicDegree, university=result.idUniversity, program=program, exam = exam) }}" >{{result.display()}}</a></p>
                                         {% endif %}
 
                                         {%if searchMethod == "Program" %}
-                                            <p>{{university}}</p>
-                                            <p>{{program}}</p>
-                                            <p>{{exam}}</p>
-                                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
-                                            city=city, academicDegree=academicDegree, program=result.courseName, university = university, exam = exam) }}"  >{{result.display()}}</a>
+                                           <p> <a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            city=city, academicDegree=academicDegree, program=result.courseName, university = university, exam = exam) }}"  >{{result.display()}}</a></p>
                                         {% endif %}
 
                                         {%if searchMethod == "Exam" %}
-                                            <p>{{university}}</p>
-                                            <p>{{program}}</p>
-                                            <p>{{exam}}</p>
-                                            <a href="{{ url_for('resultPage', searchMethod = searchMethod,
-                                            city=city, academicDegree=academicDegree, exam=result.exam, university = university, program = program) }}" >{{result.display()}}</a>
+                                            <p><a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            city=city, academicDegree=academicDegree, exam=result.exam, university = university, program = program) }}" >{{result.display()}}</a></p>
                                         {% endif %}
 
-                                    </div>
-                                </div>
+                                    {%  endfor %}
 
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-
-                                    {%if searchMethod == "University" %}
-                                        {% for reviews in dictReviews[result.idUniversity] %}
-                                            <p>{{ reviews.review }}</p>
-                                        {%  endfor %}
-                                    {% endif %}
-
-                                    {%if searchMethod == "Program"  %}
-                                        {% for reviews in dictReviews[result.courseName] %}
-                                            <p>{{ reviews.review }}</p>
-                                        {%  endfor %}
-                                    {% endif %}
-
-                                    {%if searchMethod == "Exam"  %}
-                                        {% for reviews in dictReviews[result.exam] %}
-                                            <p>{{ reviews.review }}</p>
-                                        {%  endfor %}
-                                    {% endif %}
 
                                     </div>
                                 </div>
 
                             </div>
                         </div>
+
 
                     </div>
-     {%  endfor %}
-                {% endif %}
+     {% endif %}
      </div>
+
+
 
      <!-- Static results of no other choices -->
      <div>
                 {% if searchMethod == "EndSearch" or searchMethod == "EndSearchUniversity" or searchMethod == "EndSearchProgram"  %}
-                    <div class="row">
-                        <!-- Area -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
 
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Results</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="card-body">
-
-                                        {%if searchMethod == "EndSearchUniversity"  %}
-                                            <p>{{university}}</p>
-                                            <p>{{program}}</p>
-                                            <p>{{exam}}</p>
-                                            <p>{{resultList}}</p>
-                                        {% endif %}
-
-                                        {%if searchMethod == "EndSearchProgram"  %}
-                                            <p>{{university}}</p>
-                                            <p>{{program}}</p>
-                                            <p>{{exam}}</p>
-                                            <p>{{resultList}}</p>
-                                        {% endif %}
-
-
-                                        {%if searchMethod == "EndSearch"  %}
-                                            <p>{{university}}</p>
-                                            <p>{{program}}</p>
-                                            <p>{{exam}}</p>
-                                            <p>{{resultList.exam}}</p>
-                                        {% endif %}
-                                     <!-- leave review button -->
-                                    <a href="{{ url_for('leaveReview',
-                                         city=city, academicDegree=academicDegree, university=university, program=program, exam = exam) }}" > leave review</a>
-                                  </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                        <!-- Pie Chart -->
-
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-
-                                <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-
-                                    {%if searchMethod == "EndSearchUniversity"%}
-                                        {% for reviews in dictReviews[resultList] %}
-                                            <p>{{ reviews.review }}</p>
-                                        {%  endfor %}
-                                    {% endif %}
-
-                                    {%if searchMethod == "EndSearchProgram" %}
-                                        {% for reviews in dictReviews[resultList] %}
-                                            <p>{{ reviews.review }}</p>
-                                        {%  endfor %}
-                                    {% endif %}
-
-                                    {%if searchMethod == "EndSearch"  %}
-                                        {% for result in resultList %}
-                                            {% for reviews in dictReviews[result.exam] %}
-                                                <p>{{ reviews.review }}</p>
-                                            {%  endfor %}
-                                        {%  endfor %}
-                                    {% endif %}
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
                 {% endif %}
         </div>
 
