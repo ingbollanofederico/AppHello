@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField
+from markupsafe import Markup
+from wtforms import StringField, SubmitField, PasswordField, SelectField, BooleanField, TextAreaField, RadioField
 from wtforms.validators import DataRequired,Email,Length,ValidationError, EqualTo
 from app import User
 from app import bcrypt
@@ -58,7 +59,14 @@ class formSearch (FlaskForm):
     submit = SubmitField('Search')
 
 class formReview(FlaskForm):
+    '''
+      gcapOption = Markup('<i class="rating__icon rating__icon--star fa fa-graduation-cap"></i>')
+      radioStar = RadioField(gcapOption, choices=[('0' , '0star'),('1','1star'),('2','2star'),('3','3star'),('4','4star'),('5' , '5star')])
+      starOption = Markup('<i class="rating__icon rating__icon--star fa fa-graduation-cap"></i>')'''
 
-    Review = StringField('University, Degree Course, Exam')
+    ReviewTitle = StringField('Review', validators=[DataRequired(), Length(min=20, max=50)])
+    Review = TextAreaField('Review', validators=[DataRequired(), Length(min=20, max=500)])
+    submit = SubmitField('Submit Review')
 
-    submit = SubmitField('Leave a Review')
+
+

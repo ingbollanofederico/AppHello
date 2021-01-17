@@ -2090,6 +2090,13 @@ select.form-control:focus::-ms-value {
   border-radius: 0.75rem;
 }
 
+.form-control-xlg {
+  height: calc(1.5em + 1.25rem);
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.75rem;
+}
 select.form-control[size], select.form-control[multiple] {
   height: auto;
 }
@@ -10253,3 +10260,50 @@ form .row:first-child .floating-label-form-group {
 .copyright {
   background-color: #1a252f;
 }
+.rating-group {
+    display: inline-flex;
+  }
+
+  /* make hover effect work properly in IE */
+  .rating__icon {
+    pointer-events: none;
+  }
+
+  /* hide radio inputs */
+  .rating__input {
+   position: absolute !important;
+   left: -9999px !important;
+  }
+
+  /* hide 'none' input from screenreaders */
+  .rating__input--none {
+    display: none
+  }
+
+  /* set icon padding and size */
+  .rating__label {
+    cursor: pointer;
+    padding: 0 0.1em;
+    font-size: 2rem;
+  }
+
+  /* set default star color */
+  .rating__icon--star {
+    color: #007bff;
+  }
+
+  /* if any input is checked, make its following siblings grey */
+  .rating__input:checked ~ .rating__label .rating__icon--star {
+    color: #ddd;
+  }
+
+  /* make all stars orange on rating group hover */
+  .rating-group:hover .rating__label .rating__icon--star {
+    color: #007bff;
+  }
+
+  /* make hovered input's following siblings grey on hover */
+  .rating__input:hover ~ .rating__label .rating__icon--star {
+    color: #ddd;
+  }
+

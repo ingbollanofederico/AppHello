@@ -4,7 +4,7 @@
 <!-- TOPBAR - Included here for form purposes -->
     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow ">
 
-    <!-- Sidebar Toggle (Topbar) -->
+        <!-- Sidebar Toggle (Topbar) -->
         <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
         <i class="fa fa-bars"></i>
         </button>
@@ -38,8 +38,8 @@
 
     </form>
 
-    <!-- Topbar Navbar -->
-    <ul class="navbar-nav ml-auto">
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
 
         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
         <li class="nav-item dropdown no-arrow d-sm-none">
@@ -219,8 +219,9 @@
 
     </ul>
 
-</nav>
+    </nav>
 <!-- End of Topbar -->
+
 <body>
 
 <div class="container imi-joingform">
@@ -231,8 +232,7 @@
   <div class="imc-jfheader">
       <i class="fas fa-user-graduate fa-4x"></i>
 
-      <h3>Congratulations Name Logged!</h3>
-      <h3>Last Visited on <span id="dateandtime"> 08-May-2019 12:01 PM </span> | My Profile | <span id="logstatus"> <a href="">Logout </a> </span> </h3>
+      <h3> header di fede con focus su oggetto in review</h3>
 
       </div>
 <!-- End Header -->
@@ -244,7 +244,6 @@
 
   <div class="row">
   <div class="col-md-12">
-
     <!-- Start accordion -->
                     <div id="accordion" class="">
                     <form method="post">
@@ -253,21 +252,21 @@
                             <div role="tab" id="headingOne" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" >
 
                                <div class="row">
-                                        <div class="col-10 col-lg-10">
-                                <h4 class="checkout-step-title"> <a role="button"> Edit Profile Picture</a></h4>
+                                        <div class="col-12 col-lg-12 text-center">
+                                            <h4 class="checkout-step-title"> <a role="button"> Leave Review </a></h4>
+                                            <p> Your honest opinion helps other students. We do not share any data with institutions or companies without your permission.</p>
+
+                                        </div>
+                                </div>
+                                <div class="row">
+                                        <div class="col-12 col-lg-12 text-center d-none d-sm-block d-md-block d-lg-block d-xl-block">
+                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn"><i class="fa fa-angle-double-down"></i></button>
                                         </div>
 
-                                        <div class="col-2 col-lg-2 text-right d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn">Edit <i class="fa fa-edit"></i></button>
-                                        </div>
-
-                                         <div class="col-2 col-lg-2 text-right d-md-none d-lg-none">
-                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn"><i class="fa fa-edit"></i></button>
-                                        </div>
                                 </div>
 
                             </div>
-                            <div id="collapseOne" class="collapse in">
+                            <div id="collapseOne">
 
                               <!-- Start collapse body -->
 
@@ -276,39 +275,14 @@
                                   <!-- Start row -->
 
                                     <div class="row">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-12">
                                             <div class="">
 
                                                 <div class="form-group">
                                                     <div class="col-md-12">
-                                                        <label class="control-label" for="name">Review</label>
-                                                        {{ reviewForm.Review(class="form-control input-md", placeholder="Review...")  }}
-                                                        <br>
-                                                        <input id="name" name="name" type="text" placeholder="First Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
+                                                        Review Title (20-500 char)
+                                                        {{ reviewForm.ReviewTitle(class="form-control input", placeholder="What would you highlight?")  }}
 
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Middle Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="Middle Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Last Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="Last Name" class="form-control input-md" required="">
                                                     </div>
                                                 </div>
 
@@ -320,52 +294,112 @@
 
                                     <!-- End row -->
 
-
-                                  <!-- Start row -->
+                                    <!-- Start row -->
 
                                     <div class="row">
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-12">
                                             <div class="">
-
                                                 <div class="form-group">
                                                     <div class="col-md-12">
-                                                        <label class="control-label" for="name">Mobile No</label>
-                                                        <input id="name" name="name" type="text" placeholder="+91" class="form-control input-md" required="">
+                                                        Your Review (500 char max)
+                                                        {{ reviewForm.Review(class="form-control input-lg", placeholder="What is your opnion about this University? How and what did you like this Unviersity and what would you recomment about it?...")  }}
+
                                                     </div>
                                                 </div>
 
                                             </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Email Id</label>
-                                                        <input id="name" name="name" type="text" placeholder="Email Id" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Address</label>
-                                                        <input id="name" name="name" type="text" placeholder="Address" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
+                                            
                                         </div>
 
                                     </div>
 
                                     <!-- End row -->
 
+                                    <!-- Start row -->
+
+                                    <div class="row">
+
+                                        <div class="col-lg-12">
+                                            <div class="">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        Your Overall Rating
+                                                        <div id="full-stars-example-two">
+                                                            <div class="rating-group">
+                                                                <input disabled checked class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0" type="radio">
+                                                                <label aria-label="1 star" class="rating__label" for="rating3-1"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
+                                                                <label aria-label="2 stars" class="rating__label" for="rating3-2"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
+                                                                <label aria-label="3 stars" class="rating__label" for="rating3-3"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
+                                                                <label aria-label="4 stars" class="rating__label" for="rating3-4"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
+                                                                <label aria-label="5 stars" class="rating__label" for="rating3-5"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                     <!-- End row -->
+
+
+ <!-- Start row // This was supposed to be the star rating with Flask Form. Since Flask Form is not able to render the html needed,
+                    I am passing the rate as a separate variable in the url for. Leaving my attepts here for reference.
+
+                                    <div class="row">
+
+                                        <div class="col-lg-4">
+                                            <div class="">
+                                                <div class="form-group">
+                                                    <div class="col-md-12">
+                                                        <div id="full-stars-example-two">
+                                                            <div class="rating-group">
+                                                                { % for subfield in reviewForm.radioStar %}
+                                                                { { subfield() }}
+                                                                    <i class="rating__icon rating__icon--star fa fa-graduation-cap"></i>
+                                                                { % endfor %}
+                                                                <br>
+                                                                <input disabled checked class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0" type="radio">
+                                                                <label aria-label="1 star" class="rating__label" for="rating3-1"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
+                                                                <label aria-label="2 stars" class="rating__label" for="rating3-2"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
+                                                                <label aria-label="3 stars" class="rating__label" for="rating3-3"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
+                                                                <label aria-label="4 stars" class="rating__label" for="rating3-4"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
+                                                                <label aria-label="5 stars" class="rating__label" for="rating3-5"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                                <input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                      End row -->
+
+
+
+                                    <!-- Start  row -->
+
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center">
+
+                                            <label for="defaultCheck1">I accept Apphello terms and conditions</label>
+                                            <input class="form-check-input" type="checkbox" value="" id="defaultCheck1" required="">
+
+
+                                        </div>
+                                    </div>
+
+                                    <!-- End + row -->
                                     <!-- Start button row -->
 
                                     <div class="row">
@@ -375,7 +409,8 @@
                                       <div class="col-lg-4 text-right">
                                         <div class="form-group">
                                                     <div class="col-md-12">
-                                                        <button id="nextBtn" name="nextBtn" class="btn btn-primary">Next</button>
+                                                        {{ reviewForm.submit(class="btn btn-primary")}}
+                                                        {{ reviewForm.hidden_tag() }}
                                                     </div>
                                         </div>
                                       </div>
@@ -390,293 +425,6 @@
 
                         <!-- End First collapse -->
 
-
-
-
-                        <!-- Start Second collapse Personal Details-->
-
-                        <div class="card border-left-info shadow h-100 py-2">
-                            <div role="tab" id="headingTwo" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" >
-
-                               <div class="row">
-                                        <div class="col-10 col-lg-10">
-
-                                <h4 class="checkout-step-title"> <a role="button"> Edit Personal Details</a></h4>
-                                        </div>
-
-                                        <div class="col-2 col-lg-2 text-right d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn">Edit <i class="fa fa-edit"></i></button>
-                                        </div>
-
-                                         <div class="col-2 col-lg-2 text-right d-md-none d-lg-none">
-                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn"><i class="fa fa-edit"></i></button>
-                                        </div>
-                                </div>
-
-                            </div>
-                            <div id="collapseTwo" class="collapse">
-
-                              <!-- Start collapse body -->
-
-                                <div class="checkout-step-body">
-
-                                  <!-- Start row -->
-
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <div class="">
-
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">First Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="First Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Middle Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="Middle Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Last Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="Last Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- End row -->
-
-
-                                  <!-- Start row -->
-
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <div class="">
-
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Mobile No</label>
-                                                        <input id="name" name="name" type="text" placeholder="+91" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Email Id</label>
-                                                        <input id="name" name="name" type="text" placeholder="Email Id" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Address</label>
-                                                        <input id="name" name="name" type="text" placeholder="Address" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- End row -->
-
-                                    <!-- Start button row -->
-
-                                    <div class="row">
-
-                                      <div class="col-lg-4"></div>
-                                      <div class="col-lg-4"></div>
-                                      <div class="col-lg-4 text-right">
-                                        <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <button id="nextBtn" name="nextBtn" class="btn btn-primary">Next</button>
-                                                    </div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <!-- End button row -->
-
-                                </div>
-                                <!-- End collapse body -->
-                            </div>
-                        </div>
-
-                        <!-- End Second collapse -->
-
-
-
-                        <!-- Start Third collapse See Reviews-->
-
-                        <div class="card border-left-success shadow h-100 py-2">
-                            <div role="tab" id="headingFive" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" >
-
-                               <div class="row">
-                                        <div class="col-10 col-lg-10">
-                                <h4 class="checkout-step-title"> <a role="button"> My Reviews</a></h4>
-                                        </div>
-
-                                        <div class="col-2 col-lg-2 text-right d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn">Edit <i class="fa fa-edit"></i></button>
-                                        </div>
-
-                                         <div class="col-2 col-lg-2 text-right d-md-none d-lg-none">
-                                            <button id="nextBtn" name="nextBtn" class="btn btn-default imc-jfeditbtn"><i class="fa fa-edit"></i></button>
-                                        </div>
-                                </div>
-
-                            </div>
-                            <div id="collapseFive" class="collapse">
-
-                              <!-- Start collapse body -->
-
-                                <div class="checkout-step-body">
-
-                                  <!-- Start row -->
-
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <div class="">
-
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">First Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="First Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Middle Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="Middle Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Last Name</label>
-                                                        <input id="name" name="name" type="text" placeholder="Last Name" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- End row -->
-
-
-                                  <!-- Start row -->
-
-                                    <div class="row">
-                                        <div class="col-lg-4">
-                                            <div class="">
-
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Mobile No</label>
-                                                        <input id="name" name="name" type="text" placeholder="+91" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Email Id</label>
-                                                        <input id="name" name="name" type="text" placeholder="Email Id" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <label class="control-label" for="name">Address</label>
-                                                        <input id="name" name="name" type="text" placeholder="Address" class="form-control input-md" required="">
-                                                    </div>
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- End row -->
-
-                                    <!-- Start button row -->
-
-                                    <div class="row">
-
-                                      <div class="col-lg-4"></div>
-                                      <div class="col-lg-4"></div>
-                                      <div class="col-lg-4 text-right">
-                                        <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <button id="nextBtn" name="nextBtn" class="btn btn-primary" data-toggle="modal" data-target="#reviewModal">Review</button>
-                                                    </div>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                    <!-- End button row -->
-
-                                </div>
-                                <!-- End collapse body -->
-                            </div>
-                        </div>
-
-                        <!-- End Third collapse -->
 
                     </form>
                     </div>
