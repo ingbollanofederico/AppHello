@@ -3372,11 +3372,15 @@ input[type="button"].btn-block {
 }
 
 .input-group {
-  position: relative;
+  position: fixed;
   display: flex;
   flex-wrap: wrap;
   align-items: stretch;
   width: 100%;
+}
+
+.navtop{
+
 }
 
 .input-group > .form-control,
