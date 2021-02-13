@@ -70,3 +70,22 @@ class formReview(FlaskForm):
 
 
 
+class formEditProfile(FlaskForm):
+    firstName = StringField('Name',validators=[DataRequired(),Length(min=3,max=25)])
+    lastName = StringField('Last Name',validators=[DataRequired(),Length(min=3,max=25)])
+    email = StringField('Email',validators=[DataRequired(),Email()])
+    password = PasswordField('Password',validators=[DataRequired(),Length(min=6,max=20), EqualTo('repeat_password', message='Passwords must match')])
+    repeat_password = PasswordField('Repeat Password', validators=[DataRequired(), Length(min=6, max=20)])
+    permission = SelectField('Your Degree',
+                             choices=[('1', 'High School Student'),
+                                      ('2', 'Bachelor Student'),
+                                      ('3', 'Master Student'),
+                                      ('4', 'Graduated')], validators=[DataRequired()])
+    submit = SubmitField('Register Account')
+
+    def validate_email(self,email):
+        user_check = User.query.filter_by(email=self.email.data).first()
+        if user_check:
+            raise ValidationError('This user has been register before or already taken')
+
+
