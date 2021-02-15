@@ -73,7 +73,16 @@ class formReview(FlaskForm):
 class formEditProfile(FlaskForm):
     firstName = StringField('Name',validators=[DataRequired(),Length(min=3,max=25)])
     lastName = StringField('Last Name',validators=[DataRequired(),Length(min=3,max=25)])
+
     email = StringField('Email',validators=[DataRequired(),Email()])
+    highestDegreeObtained = StringField('Highest Degree Obtained',validators=[Length(min=3,max=25)])
+    currentInstitution = StringField('Current Institution',validators=[Length(min=3,max=25)])
+    city = SelectField('City', choices=[])
+
+    stateRegion = StringField('State Region',validators=[Length(min=3,max=25)])
+    country = StringField('Country',validators=[Length(min=3,max=25)])
+
+
     password = PasswordField('Password',validators=[DataRequired(),Length(min=6,max=20), EqualTo('repeat_password', message='Passwords must match')])
     repeat_password = PasswordField('Repeat Password', validators=[DataRequired(), Length(min=6, max=20)])
     permission = SelectField('Your Degree',
@@ -81,7 +90,7 @@ class formEditProfile(FlaskForm):
                                       ('2', 'Bachelor Student'),
                                       ('3', 'Master Student'),
                                       ('4', 'Graduated')], validators=[DataRequired()])
-    submit = SubmitField('Register Account')
+    submit = SubmitField('SaveChanges')
 
     def validate_email(self,email):
         user_check = User.query.filter_by(email=self.email.data).first()

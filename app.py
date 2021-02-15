@@ -1,45 +1,47 @@
-#import
+# import
 import datetime
 import os
-
+import sqlite3
 from flask import Flask, render_template, redirect, url_for, session, flash
+from flask_sqlalchemy import SQLAlchemy, BaseQuery
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
-from flask_sqlalchemy import SQLAlchemy
 from itsdangerous import Serializer
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from sqlalchemy import and_, or_, func
+from sqlalchemy.orm import Session
+from sqlalchemy import and_, or_, not_, func
 
 import db_connector
 
 app = Flask(__name__)
 
-#Database settings
-app.config['SECRET_KEY']='sssdhgclshfsh;shd;jshjhsjhjhsjldchljk'
-app.config['SQLALCHEMY_DATABASE_URI']='sqlite:///website.db'
+# Database settings
+app.config['SECRET_KEY'] = 'sssdhgclshfsh;shd;jshjhsjhjhsjldchljk'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///website.db'
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-app.config['MAIL_SERVER']='smtp.mail.com'
-app.config['MAIL_PORT']=587
-app.config['MAIL_SSL']=False
-app.config['MAIL_TLS']=True
-app.config['MAIL_USERNAME']=os.environ['EMAIL_USERNAME']
-app.config['MAIL_PASSWORD']=os.environ['EMAIL_PASSWORD']
+app.config['MAIL_SERVER'] = 'smtp.mail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_SSL'] = False
+app.config['MAIL_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ['EMAIL_USERNAME']
+app.config['MAIL_PASSWORD'] = os.environ['EMAIL_PASSWORD']
 
 mail = Mail(app)
 
-class User (db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    email = db.Column(db.String(50),unique=True,nullable=False)
-    firstName = db.Column(db.String(50),nullable=False)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(50), unique=True, nullable=False)
+    firstName = db.Column(db.String(50), nullable=False)
     lastName = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(200),nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
     permissions_id = db.Column(db.Integer, db.ForeignKey('permissions.id'))
     reviews = db.relationship('Review', backref='User')  # only here, not in the db
 
-    #Token for password reset
+    # Token for password reset
     def get_reset_token(self, expires_sec=1800):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.email}).decode('utf-8')
@@ -58,12 +60,13 @@ class User (db.Model):
 
 
 from model import Permissions, Program, University, Exam, Review
-from form import formRegistration, loginForm, forgotPassword, formSearch, formReview
+from form import formRegistration, loginForm, forgotPassword, formSearch, formReview, formEditProfile
 
 
 @app.route('/')
 def landing():
     return render_template('landingPage.html')
+
 
 @app.route('/logout')
 def logout():
@@ -72,7 +75,6 @@ def logout():
 
 
 def searchFunction():
-
     '''create searchForm'''
     searchForm = formSearch()
 
@@ -89,56 +91,27 @@ def searchFunction():
 
     return searchForm
 
-def reviewFunction():
 
-    reviewForm=formReview()
+def reviewFunction():
+    reviewForm = formReview()
 
     return reviewForm
 
-def searchReviews(resultList,searchMethod):
 
-    dictReviews = {}
+def editProfileFunction():
+    editProfileForm = formEditProfile()
 
-    if(searchMethod == "University" or searchMethod == "Program" or searchMethod == "Exam" or searchMethod == "EndSearch" ):
-        for x in resultList:
-            if (searchMethod == "University" ):
+    '''get all cities in the db & adding them to the searchForm'''
+    cities = Program.query.order_by(Program.sedeP)
+    myCities = []
+    for x in cities:
+        myCities.append(x.sedeP)
 
-                reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity).\
-                    filter_by(idUniversity = x.idUniversity).order_by(Review.starRating).all()
+    myCities = list(dict.fromkeys(myCities))
+    myCities.sort()
+    editProfileForm.city.choices = myCities
 
-                dictReviews[x.idUniversity] = reviewList
-
-            elif (searchMethod == "Program" ):
-
-                reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University, University.idUniversity == Program.idUniversity). \
-                    filter(Program.courseName.ilike(x.courseName)).order_by(Review.starRating).all()
-
-                dictReviews[x.courseName] = reviewList
-
-            elif (searchMethod == "Exam" or searchMethod == "EndSearch"):
-
-                reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program, Exam.idProgram == Program.idProgram).join(University, University.idUniversity == Program.idUniversity). \
-                    filter(Exam.exam.ilike(x.exam)).order_by(Review.starRating).all()
-
-                dictReviews[x.exam] = reviewList
-    else:
-        if (searchMethod == "EndSearchUniversity"):
-
-            reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity). \
-                filter_by(idUniversity=int(resultList)).order_by(Review.starRating).all()
-
-            dictReviews[resultList] = reviewList
-
-        elif (searchMethod == "EndSearchProgram"):
-
-            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
-                                                                                                University.idUniversity == Program.idUniversity). \
-                filter(Program.courseName.ilike(resultList)).order_by(Review.starRating).all()
-
-            dictReviews[resultList] = reviewList
-
-
-    return dictReviews
+    return editProfileForm
 
 
 def searchValidator(searchForm):
@@ -153,9 +126,9 @@ def searchValidator(searchForm):
     if (city == "All"):
         if (searchMethod == "University"):
             if (searchText == ""):
-                #search result
+                # search result
                 resultList = University.query.order_by(University.name).all()
-                #review
+                # review
 
             else:
                 searchText = "%" + searchText + "%"
@@ -219,15 +192,143 @@ def searchValidator(searchForm):
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
                                searchMethod=searchMethod, city=city, acedemicDegree=academicDegree)
     else:
+        firstSearch = searchMethod
         dictReviews = {}
-        dictReviews = searchReviews(resultList, searchMethod)
 
-        print dictReviews
+        if (firstSearch == "University" or firstSearch == "Program" or firstSearch == "Exam"):
+            for x in resultList:
+                if (firstSearch == "University"):
+
+                    reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity). \
+                        filter_by(idUniversity=x.idUniversity).order_by(Review.starRating.desc()).all()
+
+                    dictReviews[x.idUniversity] = reviewList
+
+                elif (firstSearch == "Program"):
+
+                    reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
+                                                                                                        University.idUniversity == Program.idUniversity). \
+                        filter(Program.courseName.ilike(x.courseName)).order_by(Review.starRating.desc()).all()
+
+                    dictReviews[x.courseName] = reviewList
+
+                elif (firstSearch == "Exam"):
+
+                    reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program,
+                                                                                            Exam.idProgram == Program.idProgram).join(
+                        University, University.idUniversity == Program.idUniversity). \
+                        filter(Exam.exam.ilike(x.exam)).order_by(Review.starRating.desc()).all()
+
+                    dictReviews[x.exam] = reviewList
+
+        numberOfReviews = 0
+        dictRatingReviews = {}
+
+        if (searchMethod == "University"):
+            for result in resultList:
+                numberOfReviews = len(dictReviews[result.idUniversity])
+                averageValue = 0
+                star1 = 0.0
+                star2 = 0.0
+                star3 = 0.0
+                star4 = 0.0
+                star5 = 0.0
+                for review in dictReviews[result.idUniversity]:
+                    averageValue = averageValue + review.starRating
+                    if (review.starRating <= 1):
+                        star1 = star1 + 1
+                    elif (review.starRating > 1 and review.starRating <= 2):
+                        star2 = star2 + 1
+                    elif (review.starRating > 2 and review.starRating <= 3):
+                        star3 = star3 + 1
+                    elif (review.starRating > 3 and review.starRating <= 4):
+                        star4 = star4 + 1
+                    elif (review.starRating > 4 and review.starRating <= 5):
+                        star5 = star5 + 1
+
+                if averageValue > 0:
+                    averageValue = averageValue / numberOfReviews
+                    star1 = (star1 / numberOfReviews) * 100
+                    star2 = (star2 / numberOfReviews) * 100
+                    star3 = (star3 / numberOfReviews) * 100
+                    star4 = (star4 / numberOfReviews) * 100
+                    star5 = (star5 / numberOfReviews) * 100
+
+                dictRatingReviews[result.idUniversity] = [round(averageValue, 2), numberOfReviews, star1, star2, star3,
+                                                          star4, star5]
+
+        elif (searchMethod == "Program"):
+            for result in resultList:
+                numberOfReviews = len(dictReviews[result.courseName])
+                averageValue = 0
+                star1 = 0.0
+                star2 = 0.0
+                star3 = 0.0
+                star4 = 0.0
+                star5 = 0.0
+                for review in dictReviews[result.courseName]:
+                    averageValue = averageValue + review.starRating
+                    if (review.starRating <= 1):
+                        star1 = star1 + 1
+                    elif (review.starRating > 1 and review.starRating <= 2):
+                        star2 = star2 + 1
+                    elif (review.starRating > 2 and review.starRating <= 3):
+                        star3 = star3 + 1
+                    elif (review.starRating > 3 and review.starRating <= 4):
+                        star4 = star4 + 1
+                    elif (review.starRating > 4 and review.starRating <= 5):
+                        star5 = star5 + 1
+
+                if averageValue > 0:
+                    averageValue = averageValue / numberOfReviews
+                    star1 = (star1 / numberOfReviews) * 100
+                    star2 = (star2 / numberOfReviews) * 100
+                    star3 = (star3 / numberOfReviews) * 100
+                    star4 = (star4 / numberOfReviews) * 100
+                    star5 = (star5 / numberOfReviews) * 100
+
+                dictRatingReviews[result.courseName] = [round(averageValue, 2), numberOfReviews, star1, star2, star3,
+                                                        star4, star5]
+
+        elif (searchMethod == "Exam"):
+            for result in resultList:
+                numberOfReviews = len(dictReviews[result.exam])
+                averageValue = 0
+                star1 = 0.0
+                star2 = 0.0
+                star3 = 0.0
+                star4 = 0.0
+                star5 = 0.0
+                for review in dictReviews[result.exam]:
+                    averageValue = averageValue + review.starRating
+                    if (review.starRating <= 1):
+                        star1 = star1 + 1
+                    elif (review.starRating > 1 and review.starRating <= 2):
+                        star2 = star2 + 1
+                    elif (review.starRating > 2 and review.starRating <= 3):
+                        star3 = star3 + 1
+                    elif (review.starRating > 3 and review.starRating <= 4):
+                        star4 = star4 + 1
+                    elif (review.starRating > 4 and review.starRating <= 5):
+                        star5 = star5 + 1
+
+                if averageValue > 0:
+                    averageValue = averageValue / numberOfReviews
+                    star1 = (star1 / numberOfReviews) * 100
+                    star2 = (star2 / numberOfReviews) * 100
+                    star3 = (star3 / numberOfReviews) * 100
+                    star4 = (star4 / numberOfReviews) * 100
+                    star5 = (star5 / numberOfReviews) * 100
+
+                dictRatingReviews[result.exam] = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                                                  star5]
 
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2, city=city,
-                               academicDegree=academicDegree, searchMethod=searchMethod, dictReviews = dictReviews)
+                               academicDegree=academicDegree, searchMethod=searchMethod, dictReviews=dictReviews,
+                               dictRatingReviews=dictRatingReviews)
 
-@app.route('/homePage', methods=['POST','GET'])
+
+@app.route('/homePage', methods=['POST', 'GET'])
 def homePage():
     '''If logged in vs not logged in = 2 different views based on customer type/degree/characteristics'''
     program = Program.query.filter_by(sedeC="TORINO").all()
@@ -240,8 +341,10 @@ def homePage():
 
     return render_template('homePage.html', program=program, searchForm=searchForm)
 
-def resultValidator(searchForm,searchMethod,city,academicDegree,university,program,exam):
+
+def resultValidator(searchForm, searchMethod, city, academicDegree, university, program, exam):
     resultList = []
+    dictReviews = {}
 
     '''query dive deep on university/course/exam + first 3 reviews'''
 
@@ -262,7 +365,15 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
                      Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
             searchMethod = "Program"
 
-        # '''reviews universities'''
+        for x in resultList:
+            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
+                                                                                                University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(x.courseName), Program.idUniversity.ilike(university))).order_by(
+                Review.timeStamp.desc()).all()
+
+            dictReviews[x.courseName] = reviewList
+
+        # '''program reviews of the selected university - showed by program'''
 
     elif (university == "null" and program != "null" and exam == "null"):
         if (city == "All"):
@@ -277,7 +388,15 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
                      Program.courseName.ilike(program))).group_by(University.name).all()
             searchMethod = "University"
 
-        # '''reviews program'''
+        for x in resultList:
+            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
+                                                                                                University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(program), Program.idUniversity.ilike(x.idUniversity))).order_by(
+                Review.timeStamp.desc()).all()
+
+            dictReviews[x.idUniversity] = reviewList
+
+        # '''program reviews of the selected program - showed by university '''
 
     elif (university == "null" and program == "null" and exam != "null"):
         if (city == "All"):
@@ -291,6 +410,15 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
                 and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
                      Exam.exam.ilike(exam))).group_by(Program.courseName).all()
             searchMethod = "Program"
+
+        for x in resultList:
+            reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program,
+                                                                                    Exam.idProgram == Program.idProgram).join(
+                University, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(x.courseName), Exam.exam.ilike(exam))).order_by(
+                Review.timeStamp.desc()).all()
+
+            dictReviews[x.courseName] = reviewList
 
         # ''reviews exam'''
     elif (university != "null" and program != "null" and exam == "null"):
@@ -307,7 +435,15 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
                             Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
             searchMethod = "Exam"
 
-        # '''reviews program'''
+        for x in resultList:
+            reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program,
+                                                                                    Exam.idProgram == Program.idProgram).join(
+                University, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(program), Exam.exam.ilike(x.exam),
+                            Program.idUniversity.ilike(university))).order_by(
+                Review.timeStamp.desc()).all()
+
+            dictReviews[x.exam] = reviewList
 
     elif (university == "null" and program != "null" and exam != "null"):
         if (city == "All"):
@@ -326,7 +462,15 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
                      Exam.exam.ilike(exam))).group_by(University.name).all()
             searchMethod = "University"
 
-        # ''reviews exam'''
+        for x in resultList:
+            reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program,
+                                                                                    Exam.idProgram == Program.idProgram).join(
+                University, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(program), Exam.exam.ilike(exam),
+                            Program.idUniversity.ilike(x.idUniversity))).order_by(
+                Review.timeStamp.desc()).all()
+
+            dictReviews[x.idUniversity] = reviewList
 
     elif (university != "null" and program != "null" and exam != "null"):
         if (city == "All"):
@@ -342,44 +486,233 @@ def resultValidator(searchForm,searchMethod,city,academicDegree,university,progr
             resultList = Exam.query.join(
                 Program, Program.idProgram == Exam.idProgram).join(
                 University, University.idUniversity == Program.idUniversity).filter(
-                and_(Program.sedeP.ilike(city),Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                     Program.courseName.ilike(program),
                      Exam.exam.ilike(exam), Program.idUniversity.ilike(university))).group_by(Exam.exam).all()
             searchMethod = "EndSearch"
 
+        for x in resultList:
+            reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program,
+                                                                                    Exam.idProgram == Program.idProgram).join(
+                University, University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(program), Exam.exam.ilike(x.exam),
+                            Program.idUniversity.ilike(university))).order_by(
+                Review.timeStamp.desc()).all()
 
-        # ''reviews exam'''
+            dictReviews[x.exam] = reviewList
 
 
     else:
         flash('Your search has been altered during your request! Please try to search it again.', 'warning')
 
+    university_object = "null"
+
+    if (university != "null"):
+        university_object = University.query.filter_by(idUniversity=university).all()
+
     if (len(resultList) == 0):
-        if(searchMethod == "Program"):
+        if (searchMethod == "Program"):
             resultList = university
+            reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity). \
+                filter_by(idUniversity=university).order_by(Review.timeStamp.desc()).all()
+
+            dictReviews[university] = reviewList
             searchMethod = "EndSearchUniversity"
-        if(searchMethod == "Exam"):
+        if (searchMethod == "Exam"):
             resultList = program
+            reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
+                                                                                                University.idUniversity == Program.idUniversity). \
+                filter(and_(Program.courseName.ilike(program), Program.idUniversity.ilike(university))).order_by(
+                Review.timeStamp.desc()).all()
+
+            dictReviews[program] = reviewList
             searchMethod = "EndSearchProgram"
 
-    dictReviews = {}
-    dictReviews = searchReviews(resultList, searchMethod)
+    numberOfReviews = 0
+    RatingReviews = []
 
-    print dictReviews
-    print searchMethod
+    if (searchMethod == "University"):
+        numberOfReviews = 0
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for result in resultList:
+            # overall rew
+            numberOfReviews = numberOfReviews + len(dictReviews[result.idUniversity])
+            for review in dictReviews[result.idUniversity]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
 
-    return render_template('resultPage.html', resultList = resultList, searchForm=searchForm,city= city, academicDegree=academicDegree, university = university, program = program, exam= exam, searchMethod = searchMethod, dictReviews = dictReviews )
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3,
+                         star4, star5]
+
+    elif (searchMethod == "Program"):
+        numberOfReviews = 0
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for result in resultList:
+            numberOfReviews = numberOfReviews + len(dictReviews[result.courseName])
+            for review in dictReviews[result.courseName]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                         star5]
+
+    elif (searchMethod == "Exam" or searchMethod == "EndSearch"):
+        numberOfReviews = 0
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for result in resultList:
+            numberOfReviews = numberOfReviews + len(dictReviews[result.exam])
+            for review in dictReviews[result.exam]:
+                averageValue = averageValue + review.starRating
+                if (review.starRating <= 1):
+                    star1 = star1 + 1
+                elif (review.starRating > 1 and review.starRating <= 2):
+                    star2 = star2 + 1
+                elif (review.starRating > 2 and review.starRating <= 3):
+                    star3 = star3 + 1
+                elif (review.starRating > 3 and review.starRating <= 4):
+                    star4 = star4 + 1
+                elif (review.starRating > 4 and review.starRating <= 5):
+                    star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                         star5]
+
+    elif (searchMethod == "EndSearchUniversity"):
+        numberOfReviews = len(dictReviews[university])
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for review in dictReviews[university]:
+            averageValue = averageValue + review.starRating
+            if (review.starRating <= 1):
+                star1 = star1 + 1
+            elif (review.starRating > 1 and review.starRating <= 2):
+                star2 = star2 + 1
+            elif (review.starRating > 2 and review.starRating <= 3):
+                star3 = star3 + 1
+            elif (review.starRating > 3 and review.starRating <= 4):
+                star4 = star4 + 1
+            elif (review.starRating > 4 and review.starRating <= 5):
+                star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                         star5]
+    elif (searchMethod == "EndSearchProgram"):
+        numberOfReviews = len(dictReviews[program])
+        averageValue = 0
+        star1 = 0.0
+        star2 = 0.0
+        star3 = 0.0
+        star4 = 0.0
+        star5 = 0.0
+        for review in dictReviews[program]:
+            averageValue = averageValue + review.starRating
+            if (review.starRating <= 1):
+                star1 = star1 + 1
+            elif (review.starRating > 1 and review.starRating <= 2):
+                star2 = star2 + 1
+            elif (review.starRating > 2 and review.starRating <= 3):
+                star3 = star3 + 1
+            elif (review.starRating > 3 and review.starRating <= 4):
+                star4 = star4 + 1
+            elif (review.starRating > 4 and review.starRating <= 5):
+                star5 = star5 + 1
+
+        if averageValue > 0:
+            averageValue = averageValue / numberOfReviews
+            star1 = (star1 / numberOfReviews) * 100
+            star2 = (star2 / numberOfReviews) * 100
+            star3 = (star3 / numberOfReviews) * 100
+            star4 = (star4 / numberOfReviews) * 100
+            star5 = (star5 / numberOfReviews) * 100
+
+        RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
+                         star5]
+
+    return render_template('resultPage.html', resultList=resultList, searchForm=searchForm, city=city,
+                           academicDegree=academicDegree, university=university, program=program, exam=exam,
+                           searchMethod=searchMethod, dictReviews=dictReviews, university_object=university_object,
+                           numberOfReviews=numberOfReviews, RatingReviews=RatingReviews)
 
 
 @app.route('/resultPage/<searchMethod>/<city>/<academicDegree>/<university>/<program>/<exam>', methods=['POST', 'GET'])
-def resultPage(searchMethod,city,academicDegree,university,program,exam):
-
+def resultPage(searchMethod, city, academicDegree, university, program, exam):
     '''Search Function'''
     searchForm = searchFunction()
 
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
 
-    return resultValidator(searchForm,searchMethod,city,academicDegree,university,program,exam)
+    return resultValidator(searchForm, searchMethod, city, academicDegree, university, program, exam)
+
 
 @app.route('/universities', methods=['POST', 'GET'])
 def universities():
@@ -393,6 +726,7 @@ def universities():
 
     return render_template('infoPage.html', university=university, searchForm=searchForm, element="university")
 
+
 @app.route('/programs', methods=['POST', 'GET'])
 def programs():
     program = Program.query.group_by(Program.courseName).all()
@@ -404,6 +738,7 @@ def programs():
         return searchValidator(searchForm)
 
     return render_template('infoPage.html', program=program, searchForm=searchForm, element="program")
+
 
 @app.route('/exams', methods=['POST', 'GET'])
 def exams():
@@ -417,61 +752,76 @@ def exams():
 
     return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
 
-@app.route('/editProfile', methods=['POST', 'GET'])
-def editProfile():
 
-    '''Search Function'''
-    searchForm = searchFunction()
-
-    if searchForm.validate_on_submit():
-        return searchValidator(searchForm)
-
-
-    return render_template('editProfile.html', searchForm=searchForm)
-
-
-@app.route('/leaveReview/<city>/<academicDegree>/<university>/<program>/<exam>/ <searchMethod>', methods=['POST', 'GET'])
-def leaveReview(city,academicDegree,university,program,exam, searchMethod):
-
-
-    '''Search Function'''
-    searchForm = searchFunction()
-
-    if searchForm.validate_on_submit():
-        return searchValidator(searchForm)
-
-    '''review Function'''
-    reviewForm = reviewFunction()
-
-    if reviewForm.validate_on_submit():
-        return reviewValidator(reviewForm,city,academicDegree,university,program,exam,searchForm, searchMethod)
-    print reviewForm.errors
-
-    return render_template('leaveReview.html', reviewForm=reviewForm, searchForm=searchForm)
-
-
-def reviewValidator(reviewForm,city,academicDegree,university,program,exam,searchForm, searchMethod):
-
+def editProfileValidator(editProfileForm, city, academicDegree, university, program, exam, searchForm, searchMethod,listReviews):
     conn = db_connector.create_connection()
 
-    #query db for latest idReview
+    id = 1  # '''session['userId']'''
+    email = editProfileForm.email
+    firstName = editProfileForm.firstName
+    lastName = editProfileForm.lastName
 
-    cursor=conn.cursor()
+    db.session.update()
+    db.session.commit()
+    # db.close()  ?
+    conn.close()
+    # first part needed to keep the topbar alive and working
+
+    return editProfile(city, academicDegree, university, program, exam, searchMethod)
+
+
+@app.route('/editProfile/<city>/<academicDegree>/<university>/<program>/<exam>/<searchMethod>', methods=['POST', 'GET'])
+def editProfile(city, academicDegree, university, program, exam, searchMethod):
+    '''funziona, disabled for debugging purposes
+
+    if 'logged_in' not in session or session['logged_in'] == False:
+        return redirect(url_for('login'))
+
+        '''
+
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    '''edit Profile Function'''
+    editProfileForm = editProfileFunction()
+
+    '''fetching reviews'''
+    listReviews = Review.query.filter_by(idUser='1').order_by(Review.starRating.desc()).all()
+    # listReviews = Review.query.filter_by(idUser=session['userId']).order_by(Review.starRating.desc()).all()
+
+    if editProfileForm.validate_on_submit():
+        return editProfileValidator(editProfileForm, city, academicDegree, university, program, exam, searchForm,
+                                    searchMethod, listReviews)
+
+    return render_template('editProfile.html', searchForm=searchForm, editProfileForm=editProfileForm,
+                           listReviews=listReviews)
+
+
+def reviewValidator(reviewForm, city, academicDegree, university, program, exam, searchForm, searchMethod):
+    conn = db_connector.create_connection()
+
+    # query db for latest idReview
+
+    cursor = conn.cursor()
     query2 = " SELECT idReview from Review where idReview IN (SELECT max(idReview) FROM Review) "
     cursor.execute(query2)
-    record =cursor.fetchone()
+    record = cursor.fetchone()
 
-    idReview =      int(record[0])+1
-    idUser =        1 #'''session['userId']'''
-    sedeC =         city
-    idUniversity =  university
-    idProgram =     program
-    idExam=         exam
-    reviewTitle=    reviewForm.ReviewTitle.data
-    review=         reviewForm.Review.data
-    timeStamp =     datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    starRating=     3
+    idReview = int(record[0]) + 1
+    idUser = 1  # '''session['userId']'''
+    sedeC = city
+    idUniversity = university
+    idProgram = program
+    idExam = exam
+    reviewTitle = reviewForm.ReviewTitle.data
+    review = reviewForm.Review.data
+    timeStamp = datetime.datetime.now()
+    # timeStamp =     datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    starRating = 3
 
     newReview = Review(idReview=idReview,
                        idUser=idUser,
@@ -492,41 +842,60 @@ def reviewValidator(reviewForm,city,academicDegree,university,program,exam,searc
 
     db.session.add(newReview)
     db.session.commit()
-    #db.close()  ?
+    # db.close()  ?
     conn.close()
 
-    return resultPage(searchMethod,city,academicDegree,university,program,exam)
+    return resultPage(searchMethod, city, academicDegree, university, program, exam)
+
+
+@app.route('/leaveReview/<city>/<academicDegree>/<university>/<program>/<exam>/<searchMethod>', methods=['POST', 'GET'])
+def leaveReview(city, academicDegree, university, program, exam, searchMethod):
+    '''Search Function'''
+    searchForm = searchFunction()
+
+    if searchForm.validate_on_submit():
+        return searchValidator(searchForm)
+
+    '''review Function'''
+    reviewForm = reviewFunction()
+
+    if reviewForm.validate_on_submit():
+        return reviewValidator(reviewForm, city, academicDegree, university, program, exam, searchForm, searchMethod)
+
+    return render_template('leaveReview.html', reviewForm=reviewForm, searchForm=searchForm, city=city,
+                           academicDegree=academicDegree, university=university, program=program, exam=exam,
+                           searchMethod=searchMethod)
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return render_template('404.html'),404
+    return render_template('404.html'), 404
+
 
 @app.errorhandler(500)
 def server_error(e):
-    return render_template('500.html'),500
+    return render_template('500.html'), 500
 
 
 @app.before_first_request
 def setup():
-
     conn = db_connector.create_connection()
 
-    #add here all the tables to be dropped during the setup
+    # add here all the tables to be dropped during the setup
     tables_db = ['permissions']
     db_connector.dropTables(conn, tables_db)
 
-    #create all the tables in the db (classes in model)
+    # create all the tables in the db (classes in model)
     db.create_all()
 
-    #method 1 adding 1 item in the table
+    # method 1 adding 1 item in the table
     cursor = conn.cursor()
     query1 = "INSERT INTO permissions VALUES (1,'High School Student')"
     cursor.execute(query1)
     conn.commit()
     conn.close()
 
-    #method 2 adding 1 item in the table
+    # method 2 adding 1 item in the table
     permission_bachelor = Permissions(name='Bachelor Student')
     permission_master = Permissions(name='Master Student')
     permission_graduated = Permissions(name='Graduated')
@@ -535,7 +904,8 @@ def setup():
                         permission_graduated])
     db.session.commit()
 
-@app.route('/registration', methods=['POST','GET'])
+
+@app.route('/registration', methods=['POST', 'GET'])
 def registration():
     if 'logged_in' in session:
         return redirect(url_for('homePage'))
@@ -551,17 +921,18 @@ def registration():
         email = registerForm.email.data
         permission = registerForm.permission.data
 
-        #ENCODE PASSWORD BEFORE ADDING IT
+        # ENCODE PASSWORD BEFORE ADDING IT
         password_1 = bcrypt.generate_password_hash(registerForm.password.data).encode('utf-8')
 
-        #creation of the USER
-        newUser = User(email=email, firstName=firstName, lastName=lastName,  password=password_1, permissions_id=permission)
+        # creation of the USER
+        newUser = User(email=email, firstName=firstName, lastName=lastName, password=password_1,
+                       permissions_id=permission)
 
-        #save everything in the db
+        # save everything in the db
         db.session.add(newUser)
         db.session.commit()
 
-        #send mail
+        # send mail
         sendmail(registerForm.email.data,
                  'You have registered successfully',
                  'mail',
@@ -570,7 +941,8 @@ def registration():
                  password=registerForm.password.data)
 
         return redirect(url_for('login'))
-    return render_template('registration.html',registerForm=registerForm)
+    return render_template('registration.html', registerForm=registerForm)
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -640,12 +1012,13 @@ def reset_password(token):
 
 
 def sendmail(to, subject, template, **kwargs):
-    msg=Message(subject,
-                recipients=[to],
-                sender=app.config['MAIL_USERNAME'])
+    msg = Message(subject,
+                  recipients=[to],
+                  sender=app.config['MAIL_USERNAME'])
 
-    msg.html=render_template(template+'.html',**kwargs )
+    msg.html = render_template(template + '.html', **kwargs)
     mail.send(msg)
+
 
 if __name__ == '__main__':
     app.run()
@@ -866,6 +1239,3 @@ def logout():
     return redirect(url_for('posthtml_layout')) # =>redirect(index)
 
 '''
-
-
-

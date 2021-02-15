@@ -2090,13 +2090,6 @@ select.form-control:focus::-ms-value {
   border-radius: 0.75rem;
 }
 
-.form-control-xlg {
-  height: calc(1.5em + 1.25rem);
-  padding: 0.5rem 1rem;
-  font-size: 1.25rem;
-  line-height: 1.5;
-  border-radius: 0.75rem;
-}
 select.form-control[size], select.form-control[multiple] {
   height: auto;
 }
@@ -6097,7 +6090,7 @@ button.bg-primary:focus {
 }
 
 .bg-secondary {
-  background-color: #2c3e50 !important;
+  background-color: #224abe !important;
 }
 
 a.bg-secondary:hover, a.bg-secondary:focus,
