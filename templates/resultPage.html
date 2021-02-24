@@ -38,7 +38,7 @@
 
     </form>
 
-    <!-- Topbar Navbar -->
+    <!-- Topbar Navbar to Edit Profile or Logout -->
     <ul class="navbar-nav ml-auto">
 
         <!-- Nav Item - Search Dropdown (Visible Only XS) -->
@@ -140,37 +140,48 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% if 'logged_in' in session and session['logged_in'] == true:%}
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['first name'] }}</span>
+                {% else %}
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Please Log In</span>
+                {% endif %}
+
                 <img class="img-profile rounded-circle"
                      src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
                 >
             </a>
+
             <!-- Dropdown - User Information -->
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="userDropdown">
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                      <form action="{{ url_for('editProfile',
-                                            city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
-                                            <input type="submit" value="Edit Profile" class="btn btn-primary" />
-                      </form>
+                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                         <i class="fas fa-2x fa-user"></i>
+                        Edit Profile
+                    </a>
+
+                    <!--
+                    working url for editProfile
+                     http://127.0.0.1:5000/editProfile/All/%25/102/null/null/%20Program?
+                    -->
                 </a>
+
+                <div class="dropdown-divider"></div>
+
                 <a class="dropdown-item" href="#">
-                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <form action="{{ url_for('editProfile',
-                                            city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
-                                            <input type="submit" value="Edit My Reviews " class="btn btn-primary" />
-                    </form>
+                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                         <i class="fas fa-2x fa-cogs"></i>
+                        My Reviews
+                    </a>
                 </a>
 
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <form action="{{ url_for('login') }}">
-                            <input type="submit" value="Logout" class="btn btn-primary" />
-                    </form>
-
+                         <a class="nav-link" href="{{ url_for('login') }}">
+                         <i class="fas fa-2x fa-sign-out-alt"></i>
+                           Log Out
+                         </a>
                 </a>
+
             </div>
         </li>
         </nav>
@@ -1136,17 +1147,17 @@
 
 
                                         {%if searchMethod == "University" %}
-                                            <p><a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            <p> <a class="text-center -bold" href="{{ url_for('resultPage', searchMethod = searchMethod,
                                             city=city, academicDegree=academicDegree, university=result.idUniversity, program=program, exam = exam) }}" >{{result.display()}}</a></p>
                                         {% endif %}
 
                                         {%if searchMethod == "Program" %}
-                                           <p> <a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                           <p> <a class="text-center -bold" href="{{ url_for('resultPage', searchMethod = searchMethod,
                                             city=city, academicDegree=academicDegree, program=result.courseName, university = university, exam = exam) }}"  >{{result.display()}}</a></p>
                                         {% endif %}
 
                                         {%if searchMethod == "Exam" %}
-                                            <p><a href="{{ url_for('resultPage', searchMethod = searchMethod,
+                                            <p><a class="text-center -bold" href="{{ url_for('resultPage', searchMethod = searchMethod,
                                             city=city, academicDegree=academicDegree, exam=result.exam, university = university, program = program) }}" >{{result.display()}}</a></p>
                                         {% endif %}
 

@@ -37,6 +37,11 @@ class User(db.Model):
     firstName = db.Column(db.String(50), nullable=False)
     lastName = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    highestDegreeObtained = db.Column(db.String(100))
+    currentInstitution = db.Column(db.String(100))
+    city = db.Column(db.String(100))
+    stateRegion = db.Column(db.String(100))
+    country = db.Column(db.String(100))
 
     permissions_id = db.Column(db.Integer, db.ForeignKey('permissions.id'))
     reviews = db.relationship('Review', backref='User')  # only here, not in the db
@@ -90,28 +95,6 @@ def searchFunction():
     searchForm.city.choices = myCities
 
     return searchForm
-
-
-def reviewFunction():
-    reviewForm = formReview()
-
-    return reviewForm
-
-
-def editProfileFunction():
-    editProfileForm = formEditProfile()
-
-    '''get all cities in the db & adding them to the searchForm'''
-    cities = Program.query.order_by(Program.sedeP)
-    myCities = []
-    for x in cities:
-        myCities.append(x.sedeP)
-
-    myCities = list(dict.fromkeys(myCities))
-    myCities.sort()
-    editProfileForm.city.choices = myCities
-
-    return editProfileForm
 
 
 def searchValidator(searchForm):
@@ -421,6 +404,7 @@ def resultValidator(searchForm, searchMethod, city, academicDegree, university, 
             dictReviews[x.courseName] = reviewList
 
         # ''reviews exam'''
+
     elif (university != "null" and program != "null" and exam == "null"):
         if (city == "All"):
             resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
@@ -665,6 +649,7 @@ def resultValidator(searchForm, searchMethod, city, academicDegree, university, 
 
         RatingReviews = [round(averageValue, 2), numberOfReviews, star1, star2, star3, star4,
                          star5]
+
     elif (searchMethod == "EndSearchProgram"):
         numberOfReviews = len(dictReviews[program])
         averageValue = 0
@@ -711,6 +696,11 @@ def resultPage(searchMethod, city, academicDegree, university, program, exam):
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
 
+    ## edit: removed due to clash with editprofile
+    # needed because exam empty was creating issues while writing reviews
+    # if not exam:
+    #    exam="null"
+
     return resultValidator(searchForm, searchMethod, city, academicDegree, university, program, exam)
 
 
@@ -753,31 +743,68 @@ def exams():
     return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
 
 
-def editProfileValidator(editProfileForm, city, academicDegree, university, program, exam, searchForm, searchMethod,listReviews):
+def editProfileFunction():
+    editProfileForm = formEditProfile()
+
+    '''get all cities in the db & add them to the searchForm'''
+    cities = Program.query.order_by(Program.sedeP)
+    myCities = []
+    for x in cities:
+        myCities.append(x.sedeP)
+
+    myCities = list(dict.fromkeys(myCities))
+    myCities.sort()
+    editProfileForm.city.choices = myCities
+
+    #query che popola he poola il form con l'id nella session'
+
+    return editProfileForm
+
+
+def editProfileValidator(editProfileForm, listReviews):
     conn = db_connector.create_connection()
 
-    id = 1  # '''session['userId']'''
-    email = editProfileForm.email
-    firstName = editProfileForm.firstName
-    lastName = editProfileForm.lastName
+
+    id = 2  # '''session['userId']'''
+    email = editProfileForm.email.data
+    firstName = editProfileForm.firstName.data
+    lastName = editProfileForm.lastName.data
+    highestDegreeObtained = editProfileForm.highestDegreeObtained.data
+    currentInstitution = editProfileForm.currentInstitution.data
+    selectedCity = editProfileForm.city.data
+    stateRegion = editProfileForm.stateRegion.data
+    country = editProfileForm.country.data
+
+    cursor = conn.cursor()
+    cursor.execute("UPDATE user SET firstName=%s, lastName=%s, email=%s"
+                   "highestDegreeObtained= %s, currentInstitution = %s,"
+                   "city=%s, stateRegion=%s, country=%s, "
+                   "WHERE id=%d",
+                   firstName, lastName, email, highestDegreeObtained, currentInstitution, selectedCity, stateRegion,
+                   country,
+                   id)  # '''session['userId']''')
 
     db.session.update()
     db.session.commit()
     # db.close()  ?
     conn.close()
-    # first part needed to keep the topbar alive and working
 
-    return editProfile(city, academicDegree, university, program, exam, searchMethod)
+    flash('Profile Successfully updated', 'success')
+
+    #    return editProfile(city, academicDegree, university, program, exam, searchMethod)
+    return render_template('editProfile.html')
 
 
-@app.route('/editProfile/<city>/<academicDegree>/<university>/<program>/<exam>/<searchMethod>', methods=['POST', 'GET'])
-def editProfile(city, academicDegree, university, program, exam, searchMethod):
+@app.route('/editProfile', methods=['POST', 'GET'])
+def editProfile():
     '''funziona, disabled for debugging purposes
 
     if 'logged_in' not in session or session['logged_in'] == False:
         return redirect(url_for('login'))
 
         '''
+
+    #  if flag:
 
     '''Search Function'''
     searchForm = searchFunction()
@@ -792,9 +819,9 @@ def editProfile(city, academicDegree, university, program, exam, searchMethod):
     listReviews = Review.query.filter_by(idUser='1').order_by(Review.starRating.desc()).all()
     # listReviews = Review.query.filter_by(idUser=session['userId']).order_by(Review.starRating.desc()).all()
 
+
     if editProfileForm.validate_on_submit():
-        return editProfileValidator(editProfileForm, city, academicDegree, university, program, exam, searchForm,
-                                    searchMethod, listReviews)
+        return editProfileValidator(editProfileForm, listReviews)
 
     return render_template('editProfile.html', searchForm=searchForm, editProfileForm=editProfileForm,
                            listReviews=listReviews)
@@ -809,6 +836,12 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     query2 = " SELECT idReview from Review where idReview IN (SELECT max(idReview) FROM Review) "
     cursor.execute(query2)
     record = cursor.fetchone()
+
+
+    university_object = "null"
+
+    if (university != "null"):
+        university_object = University.query.filter_by(idUniversity=university).all()
 
     idReview = int(record[0]) + 1
     idUser = 1  # '''session['userId']'''
@@ -845,7 +878,7 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     # db.close()  ?
     conn.close()
 
-    return resultPage(searchMethod, city, academicDegree, university, program, exam)
+    return resultPage(searchMethod, city, academicDegree, university, program, exam,university_object)
 
 
 @app.route('/leaveReview/<city>/<academicDegree>/<university>/<program>/<exam>/<searchMethod>', methods=['POST', 'GET'])
@@ -853,18 +886,26 @@ def leaveReview(city, academicDegree, university, program, exam, searchMethod):
     '''Search Function'''
     searchForm = searchFunction()
 
+
+
+    university_object = "null"
+
+    if (university != "null"):
+        university_object = University.query.filter_by(idUniversity=university).all()
+
+
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
 
     '''review Function'''
-    reviewForm = reviewFunction()
+    reviewForm = formReview()
 
     if reviewForm.validate_on_submit():
         return reviewValidator(reviewForm, city, academicDegree, university, program, exam, searchForm, searchMethod)
 
     return render_template('leaveReview.html', reviewForm=reviewForm, searchForm=searchForm, city=city,
                            academicDegree=academicDegree, university=university, program=program, exam=exam,
-                           searchMethod=searchMethod)
+                           searchMethod=searchMethod,university_object=university_object)
 
 
 @app.errorhandler(404)

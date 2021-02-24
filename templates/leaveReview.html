@@ -33,8 +33,15 @@
             {{ searchForm.submit(class="btn btn-primary") }}
                 {{ searchForm.hidden_tag() }}
             </div>
+
         </div>
 
+
+            {% for field, errors in searchForm.errors.iteritems() %}
+                <div class="alert alert-error">
+                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
+                </div>
+            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -139,7 +146,7 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% if 'logged_in' in session and session['logged_in'] == true:%}
+                {% if 'logged_in' in session and session['logged_in'] == true %}
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['first name'] }}</span>
                 {% else %}
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Please Log In</span>
@@ -154,8 +161,8 @@
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
                     <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
-                         <i class="fas fa-fw fa-user"></i>
-                    <span>Edit Profile</span>
+                         <i class="fas fa-2x fa-user"></i>
+                        Edit Profile
                     </a>
 
                     <!--
@@ -163,18 +170,21 @@
                      http://127.0.0.1:5000/editProfile/All/%25/102/null/null/%20Program?
                     -->
                 </a>
+
+                <div class="dropdown-divider"></div>
+
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
-                         <i class="fas fa-fw fa-cogs"></i>
-                    <span>My Reviews</span>
+                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam=exam, searchMethod=searchMethod) }}">
+                         <i class="fas fa-2x fa-cogs"></i>
+                        My Reviews
                     </a>
                 </a>
 
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                          <a class="nav-link" href="{{ url_for('login') }}">
-                         <i class="fas fa-fw fa-sign-out-alt"></i>
-                            <span>Log Out</span>
+                         <i class="fas fa-2x fa-sign-out-alt"></i>
+                           Log Out
                          </a>
                 </a>
 
@@ -195,10 +205,136 @@
   <!-- Start Header -->
 
   <div class="imc-jfheader">
-     <!-- <i class="fas fa-user-graduate fa-7x align-items-center"></i> -->
-        se riusciamo, inseriamo header di resultpage. Casini con variabili da render se hardcopied, da rivedere
 
-      </div>
+
+     <!-- Result Page - Information regarding the choice made -->
+     <div>
+         <div class="row">
+            <div class="col-xl-12 col-lg-12">
+                <div class="card shadow mb-4">
+                    <div class="card-body">
+
+                    <div style="display: flex">
+                        {%if university_object != "null" %}
+                            <div class="col-xl-2 col-lg-7">
+                                <p><img class="logo" src="{{university_object[0].staticLogo}}"></p>
+                                {%if exam != "null" %}
+                                    <p style="font-style: italic; font-size: smaller">Focus Choice: Exam</p>
+                                {%elif program != "null" %}
+                                    <p style="font-style: italic; font-size: smaller">Focus Choice: Program</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-xl-5 col-lg-7">
+
+                                 <p style="font-style: italic; font-weight: bold; font-size: larger"> {{ university_object[0].name }}</p>
+
+                                    {%if program != "null" %}
+                                        <p style="font-style: italic; font-weight: bold; font-size: smaller">{{ program }}</p>
+
+                                        {%if exam != "null" %}
+                                            <p style="font-style: italic; font-weight: bold; font-size: smaller">{{ exam }}</p>
+                                        {% endif %}
+
+                                    {% endif %}
+
+                                    {%if program == "null" %}
+                                        {%if exam != "null" %}
+                                            <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ exam }}</p>
+                                            <p style="font-style: italic; font-size: medium; text-align: center">(EXAM)</p>
+                                        {% endif %}
+                                    {% endif %}
+
+                                {% if university_object[0].state != None %}
+                                    <p>State: {{ university_object[0].state }}</p>
+                                {% endif %}
+                                {% if university_object[0].state == None %}
+                                    <p>State: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].region != None %}
+                                    <p>Region: {{ university_object[0].region }}</p>
+                                {% endif %}
+                                {% if university_object[0].region == None %}
+                                    <p>Region: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].address != None %}
+                                    <p>Address: {{ university_object[0].address }}</p>
+                                {% endif %}
+                                {% if university_object[0].address == None %}
+                                    <p>Address: Information Not Available</p>
+                                {% endif %}
+
+                            </div>
+
+                            <div class="col-xl-5 col-lg-7">
+
+                                {% if university_object[0].Cap != None %}
+                                    <p>CAP: {{ university_object[0].Cap }}</p>
+                                {% endif %}
+                                {% if university_object[0].Cap == None %}
+                                    <p>CAP: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].Tel != None %}
+                                    <p>{{ university_object[0].Tel }}</p>
+                                {% endif %}
+                                {% if university_object[0].Tel == None %}
+                                    <p>Tel: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].Fax != None %}
+                                    <p> {{ university_object[0].Fax }}</p>
+                                {% endif %}
+                                {% if university_object[0].Fax == None %}
+                                    <p>FAX: Information Not Available</p>
+                                {% endif %}
+
+                                {% if university_object[0].website != None %}
+                                    <a href="{{ university_object[0].website }}">Website</a>
+                                {% endif %}
+                                {% if university_object[0].website == None %}
+                                    <p>Website: Information Not Available</p>
+                                {% endif %}
+
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+
+                        {%if university == "null" %}
+                            {%if program != "null" %}
+                                <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ program }}</p>
+
+                                {%if exam != "null" %}
+                                    <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ exam }}</p>
+                                    <p style="font-style: italic; font-size: medium; text-align: center">(EXAM)</p>
+                                {% endif %}
+
+                                {%if exam == "null" %}
+                                    <p style="font-style: italic; font-size: medium; text-align: center">(Degree Course)</p>
+                                {% endif %}
+                            {% endif %}
+
+                            {%if program == "null" %}
+                                {%if exam != "null" %}
+                                    <p style="font-style: italic; font-weight: bold; font-size: larger; text-align: center">{{ exam }}</p>
+                                    <p style="font-style: italic; font-size: medium; text-align: center">(EXAM)</p>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+
+                    </div>
+                    </div>
+                </div>
+            </div>
+         </div>
+     </div>
+
+
+
+  </div>
  <!-- -->
 
 <!-- Start Joining Form -->
@@ -389,7 +525,11 @@
                         </div>
 
                         <!-- End First collapse -->
-
+                          {% for field, errors in reviewForm.errors.iteritems() %}
+                              <div class="alert alert-error">
+                                  <span class="text-danger">   {{ reviewForm[field].label }}: {{ ', '.join(errors) }}</span></br>
+                              </div>
+                          {% endfor %}
 
                     </form>
                     </div>
