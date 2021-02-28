@@ -65,7 +65,7 @@ class User(db.Model):
 
 
 from model import Permissions, Program, University, Exam, Review
-from form import formRegistration, loginForm, forgotPassword, formSearch, formReview, formEditProfile
+from form import formRegistration, loginForm, forgotPassword, formSearch, formReview, formEditProfile, formDeleteReview
 
 
 @app.route('/')
@@ -76,6 +76,7 @@ def landing():
 @app.route('/logout')
 def logout():
     session.clear()
+    flash('You logged out successfully', 'warning')
     return redirect(url_for('landing'))
 
 
@@ -366,9 +367,8 @@ def resultValidator(searchForm, searchMethod, city, academicDegree, university, 
             searchMethod = "University"
         else:
             resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
-                filter(
-                and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
-                     Program.courseName.ilike(program))).group_by(University.name).all()
+                filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                            Program.courseName.ilike(program))).group_by(University.name).all()
             searchMethod = "University"
 
         for x in resultList:
@@ -743,6 +743,7 @@ def exams():
     return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
 
 
+# Mattia Edit
 def editProfileFunction():
     editProfileForm = formEditProfile()
 
@@ -756,16 +757,60 @@ def editProfileFunction():
     myCities.sort()
     editProfileForm.city.choices = myCities
 
-    #query che popola he poola il form con l'id nella session'
+    # query che popola he poola il form con l'id nella session'
+
+    user = User.query.filter(User.id == session['user_id']).first()
+
+    # passa USER nel html
+    if user:
+        id = session['user_id']
+        editProfileForm.email.data = user.email
+        editProfileForm.firstName.data = user.firstName
+        editProfileForm.lastName.data = user.lastName
+        editProfileForm.highestDegreeObtained.data = user.highestDegreeObtained
+        editProfileForm.currentInstitution.data = user.currentInstitution
+        editProfileForm.city.data = user.city
+        editProfileForm.stateRegion.data = user.stateRegion
+        editProfileForm.country.data = user.country
 
     return editProfileForm
 
 
-def editProfileValidator(editProfileForm, listReviews):
+# Mattia edit
+def deleteReviewFunction(listReviews):
+    deleteReviewForm = formDeleteReview()
+
+    myReviews = []
+
+    for x in listReviews:
+        myReviews.append(x.idReview)
+
+    deleteReviewForm.reviews.choices = myReviews
+    return deleteReviewForm
+
+
+# Mattia Edit
+def deleteReviewValidator(deleteReviewForm):
     conn = db_connector.create_connection()
 
+    idReview = deleteReviewForm.reviews.data
 
-    id = 2  # '''session['userId']'''
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM review WHERE "
+                   "WHERE idReview=%d",
+                   idReview)
+
+    db.session.update()
+    db.session.commit()
+    # db.close()  ?
+    conn.close()
+
+
+# Mattia Edit
+def editProfileValidator(editProfileForm):
+    conn = db_connector.create_connection()
+
+    id = session['user_id']
     email = editProfileForm.email.data
     firstName = editProfileForm.firstName.data
     lastName = editProfileForm.lastName.data
@@ -781,8 +826,7 @@ def editProfileValidator(editProfileForm, listReviews):
                    "city=%s, stateRegion=%s, country=%s, "
                    "WHERE id=%d",
                    firstName, lastName, email, highestDegreeObtained, currentInstitution, selectedCity, stateRegion,
-                   country,
-                   id)  # '''session['userId']''')
+                   country, id)
 
     db.session.update()
     db.session.commit()
@@ -795,16 +839,11 @@ def editProfileValidator(editProfileForm, listReviews):
     return render_template('editProfile.html')
 
 
+# Mattia Edit
 @app.route('/editProfile', methods=['POST', 'GET'])
 def editProfile():
-    '''funziona, disabled for debugging purposes
-
     if 'logged_in' not in session or session['logged_in'] == False:
         return redirect(url_for('login'))
-
-        '''
-
-    #  if flag:
 
     '''Search Function'''
     searchForm = searchFunction()
@@ -812,21 +851,29 @@ def editProfile():
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
 
+    conn = db_connector.create_connection()
+    dbUser = User.query.filter(User.id == session['user_id'])
+    conn.close()
+
     '''edit Profile Function'''
     editProfileForm = editProfileFunction()
 
     '''fetching reviews'''
-    listReviews = Review.query.filter_by(idUser='1').order_by(Review.starRating.desc()).all()
-    # listReviews = Review.query.filter_by(idUser=session['userId']).order_by(Review.starRating.desc()).all()
-
+    listReviews = Review.query.filter_by(idUser=session['user_id']).order_by(Review.starRating.desc()).all()
 
     if editProfileForm.validate_on_submit():
-        return editProfileValidator(editProfileForm, listReviews)
+        return editProfileValidator(editProfileForm)
+
+    deleteReviewForm = deleteReviewFunction(listReviews)
+
+    if deleteReviewForm.validate_on_submit():
+        return deleteReviewValidator(deleteReviewForm)
 
     return render_template('editProfile.html', searchForm=searchForm, editProfileForm=editProfileForm,
-                           listReviews=listReviews)
+                           listReviews=listReviews, dbUser=dbUser, deleteReviewForm=deleteReviewForm)
 
 
+# Mattia Edit
 def reviewValidator(reviewForm, city, academicDegree, university, program, exam, searchForm, searchMethod):
     conn = db_connector.create_connection()
 
@@ -837,18 +884,36 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     cursor.execute(query2)
     record = cursor.fetchone()
 
-
     university_object = "null"
+    idProgram = "null"
+    idExam = "null"
+
+    # this is needed to show data about the object currently rendered and to fetch again ids of program and exam
 
     if (university != "null"):
         university_object = University.query.filter_by(idUniversity=university).all()
 
+    if (program != "null"):
+        # id program
+        if (city == "All"):
+            idProgram = Program.query. \
+                filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
+                            Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
+            city = Program.query. \
+                filter(and_(Program.idProgram.ilike(idProgram)).group_by(Program.sedeC).all())
+        else:
+            idProgram = Program.query. \
+                filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
+                            Program.courseName.ilike(program),
+                            Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
+
+    if (exam != "null"):
+        # id program and idexam
+        idExam = Exam.query.filter(and_(Exam.idProgram.ilike(idProgram), Exam.exam.ilike(exam)).group_by(exam)).all()
+
     idReview = int(record[0]) + 1
-    idUser = 1  # '''session['userId']'''
+    idUser = session['user_id']
     sedeC = city
-    idUniversity = university
-    idProgram = program
-    idExam = exam
     reviewTitle = reviewForm.ReviewTitle.data
     review = reviewForm.Review.data
     timeStamp = datetime.datetime.now()
@@ -859,40 +924,31 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     newReview = Review(idReview=idReview,
                        idUser=idUser,
                        sedeC=sedeC,
-                       idUniversity=idUniversity,
+                       idUniversity=university,
                        idProgram=idProgram,
                        idExam=idExam,
                        reviewTitle=reviewTitle,
                        review=review,
                        timeStamp=timeStamp,
                        starRating=starRating)
-    '''
-    query1 = "INSERT INTO reviews " \
-             " (idReview, idUser, sedeC, idUniversity, idProgram, idExam, reviewTitle, review," \
-             " timeStamp, starRating) " \
-             "VALUES (idReview,)
-   '''
 
     db.session.add(newReview)
     db.session.commit()
-    # db.close()  ?
     conn.close()
 
-    return resultPage(searchMethod, city, academicDegree, university, program, exam,university_object)
+    return resultPage(searchMethod, city, academicDegree, university, program, exam)
 
 
+# Mattia Edit
 @app.route('/leaveReview/<city>/<academicDegree>/<university>/<program>/<exam>/<searchMethod>', methods=['POST', 'GET'])
 def leaveReview(city, academicDegree, university, program, exam, searchMethod):
     '''Search Function'''
     searchForm = searchFunction()
 
-
-
     university_object = "null"
 
     if (university != "null"):
         university_object = University.query.filter_by(idUniversity=university).all()
-
 
     if searchForm.validate_on_submit():
         return searchValidator(searchForm)
@@ -905,7 +961,7 @@ def leaveReview(city, academicDegree, university, program, exam, searchMethod):
 
     return render_template('leaveReview.html', reviewForm=reviewForm, searchForm=searchForm, city=city,
                            academicDegree=academicDegree, university=university, program=program, exam=exam,
-                           searchMethod=searchMethod,university_object=university_object)
+                           searchMethod=searchMethod, university_object=university_object)
 
 
 @app.errorhandler(404)

@@ -77,9 +77,15 @@ class formEditProfile(FlaskForm):
     firstName = StringField('First Name', validators=[DataRequired(), Length(min=3, max=50)])
     lastName = StringField('Last Name', validators=[DataRequired(), Length(min=3, max=50)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    highestDegreeObtained = StringField('Highest Degree Obtained', validators=[Length(min=3, max=50)])
-    currentInstitution = StringField('Current Institution', validators=[Length(min=3, max=50)])
+    highestDegreeObtained = StringField('Highest Degree Obtained')
+    currentInstitution = StringField('Current Institution')
     city = SelectField('City', choices=[])
     stateRegion = StringField('State Region')
     country = StringField('Country')
     submit = SubmitField('Submit Changes')
+
+class formDeleteReview(FlaskForm):
+    reviews = SelectField('Reviews', choices=[])
+    submit = SubmitField('Delete Review')
+
+

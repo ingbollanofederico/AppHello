@@ -1,22 +1,22 @@
 {% extends "Layout/layout.html" %}
 
 {% block main %}
+
 <!-- TOPBAR - Included here for form purposes -->
-    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow ">
+<nav class="navbar navbar-expand navbar-light bg-white  mb-4 static-top shadow ">
 
     <!-- Sidebar Toggle (Topbar) -->
-        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
         <i class="fa fa-bars"></i>
-        </button>
+    </button>
 
-        <!--  Topbar Search -->
-        <form class="search" method="post">
+    <!-- Topbar Search -->
+    <form class="search" method="post">
 
         <div class="input-group">
-        <div>
-        {{ searchForm.searchText(class="form-control bg-light border-0 small", placeholder="Search for...")  }}
-        </div>
-
+            <div>
+            {{ searchForm.searchText(class="form-control bg-light border-0 small", placeholder="Search for...")  }}
+            </div>
 
             <div>
             {{ searchForm.searchMethod(class="form-control bg-light border-0 small")  }}
@@ -31,11 +31,17 @@
             </div>
 
             <div class="input-group-append">
-            {{ searchForm.submit(class="btn btn-primary") }}
-                {{ searchForm.hidden_tag() }}
+            {{ searchForm.submit(class="btn btn-primary") }}{{ searchForm.hidden_tag() }}
             </div>
+
         </div>
 
+
+            {% for field, errors in searchForm.errors.iteritems() %}
+                <div class="alert alert-error">
+                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
+                </div>
+            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -64,10 +70,10 @@
                 </form>
             </div>
         </li>
+  {% if 'logged_in' in session and session['logged_in'] == true %}
 
-
-        <nav class="topbar">
         <!-- Nav Item - Messages -->
+        <nav class="topbar">
         <li class="nav-item dropdown no-arrow mx-1">
             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -140,16 +146,14 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% if 'logged_in' in session and session['logged_in'] == true %}
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['first name'] }}</span>
-                {% else %}
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Please Log In</span>
-                {% endif %}
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> Howdy {{ session['first name'] }}</span>
 
                 <img class="img-profile rounded-circle"
                      src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
                 >
             </a>
+
+
 
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -168,7 +172,7 @@
                 <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam=exam, searchMethod=searchMethod) }}">
                          <i class="fas fa-2x fa-cogs"></i>
                         My Reviews
                     </a>
@@ -176,7 +180,7 @@
 
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                         <a class="nav-link" href="{{ url_for('login') }}">
+                         <a class="nav-link" href="{{ url_for('logout') }}">
                          <i class="fas fa-2x fa-sign-out-alt"></i>
                            Log Out
                          </a>
@@ -185,137 +189,161 @@
             </div>
         </li>
         </nav>
-
+  {% else %}
+      <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
+  {% endif %}
     </ul>
+
 </nav>
 <!-- End of Topbar -->
-<body>
 
+
+<body>
 
 
 <div class="container imi-joingform">
 
-
-
 <!-- Start Edit Profile Form 2 -->
 
     <div class="container rounded bg-white mt-5 mb-5">
-    <div class="row">
-        <div class="col-md-3 border-right">
-            <div class="d-flex flex-column align-items-center text-center p-3 py-5">
-                <img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="img">
-                <span class="font-weight-bold">{{ session['first name'] }} {{ session['last name'] }}</span>
-                <span class="text-black-50">{{ session['email'] }} edogaru@mail.com.my</span>
-                <br>
-                <br>
-                <div class="text-center">
-                                        <!-- <a class="medium" href="{ url_for('forgot-password') }}">Forgot Password?</a>-->
-                                         <a class="medium" href="forgot-password.html">Forgot Password?</a>
 
-                 </div>
-                  <form action="{{ url_for('editProfile')}}">
-                    <input type="submit" value="Eit Password" class="btn btn-primary" />
-                  </form>
-            </div>
+        <div class="row">
 
-        </div>
+            <div class="col-md-3 border-right">
+                <div class="d-flex flex-column align-items-center text-center p-3 py-5">
+                    <img class="rounded-circle mt-5" width="150px" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="img">
+                    <span class="font-weight-bold">{{ session['first name'] }} {{ session['last name'] }}</span>
+                    <span class="text-black-50"> {{ session['email'] }} </span>
+                    <span class="text-gray-300">Your User id: {{ session['user_id'] }}</span>
 
-        <div class="col-md-5 border-right">
-            <div class="p-3 py-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="text-right">Personal Information</h4>
-                </div>
+                    <div class="text-center">
+                        <!-- <a class="medium" href="{ url_for('forgot_password') }}">Forgot Password?</a> -->
+                        <a class="medium" href="forgot-password.html">Forgot Password?</a>
 
-                <div class="row mt-2">
-                    <div class="col-md-6"> <label class="labels">Name</label> {{ editProfileForm.firstName(class="form-control input")  }} </div>
-                    <div class="col-md-6"> <label class="labels">Surname</label> {{ editProfileForm.lastName(class="form-control input")  }} </div>
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col-md-12"> <label class="labels">Email</label> {{ editProfileForm.email(class="form-control input")  }} </div>
-                    <div class="col-md-12"> <label class="labels">Highest Degree Obtained</label> {{ editProfileForm.highestDegreeObtained(class="form-control input")  }} </div>
-                    <div class="col-md-12"> <label class="labels">Current Institution</label> {{ editProfileForm.currentInstitution(class="form-control input")  }} </div>
-                    <div class="col-md-12"> <label class="labels">City</label> {{ editProfileForm.city(class="form-control")  }} </div>
-
-                </div>
-
-                <div class="row mt-3">
-                    <div class="col-md-6"><label class="labels">State/Region</label>{{ editProfileForm.stateRegion(class="form-control input")  }} </div>
-                    <div class="col-md-6"><label class="labels">Country</label>{{ editProfileForm.country(class="form-control input")  }} </div>
-
-
-                </div>
-
-                <div class="mt-5 text-center">
-                    {{ editProfileForm.submit(class="btn btn-primary")}}
-                        {{ editProfileForm.hidden_tag() }}
-                </div>
-                    {% for field, errors in editProfileForm.errors.iteritems() %}
-                              <div class="alert alert-error">
-                                  <span class="text-danger">   {{ editProfileForm[field].label }}: {{ ', '.join(errors) }}</span></br>
-                              </div>
-                    {% endfor %}
-
-
-            </div>
-        </div>
-        <div class="col-md-3">
-             <div class="p-3 py-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="text-right">My Reviews</h4>
-                </div>
-
-                       {% for x in listReviews[:5] %}
-                             <div class="row">
-                                <div class="row mt-3 border">
-                                    <div class="col-md-3"><label class="labels">Title</label></div>
-                                    <div class="col-md-12">{{ x.reviewTitle }}</div>
-                                        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('homePage')}}">
-                                            <div class="sidebar-brand-icon rotate-n-15">
-                                            <i class="fas fa-remove"></i>
-                                            </div>
-                                            <div class="sidebar-brand-text mx-3">Delete Review</div>
-                                        </a>
-                                </div>
-                             </div>
-                           
-                        {% endfor %}
-                     <br>
-                         <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
-                 <div id="demo" class="collapse">
-                     <br>
-                        {% for x in listReviews[5:] %}
-                             <div class="row">
-                                <div class="row mt-3 border">
-                                    <div class="col-md-3"><label class="labels">Title</label></div>
-                                    <div class="col-md-12">{{ x.reviewTitle }}</div>
-                                        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('homePage')}}">
-                                            <div class="sidebar-brand-icon rotate-n-15">
-                                            <i class="fas fa-remove"></i>
-                                            </div>
-                                            <div class="sidebar-brand-text mx-3">Delete Review</div>
-                                        </a>
-                                </div>
                      </div>
-                    {% endfor %}
+                      <form action="{{ url_for('editProfile')}}">
+                        <input type="submit" value="Edit Password" class="btn btn-primary" />
+                      </form>
+                </div>
+
+            </div>
+            <div class="col-md-5 border-right">
+                    <div class="p-3 py-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h4 class="text-right">Personal Information</h4>
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-md-6"> <label class="labels">Name</label> {{ editProfileForm.firstName(class="form-control input")  }} </div>
+                            <div class="col-md-6"> <label class="labels">Surname</label> {{ editProfileForm.lastName(class="form-control input")  }} </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-12"> <label class="labels">Email</label> {{ editProfileForm.email(class="form-control input", placeholder=dbUser.email)  }} </div>
+                            <div class="col-md-12"> <label class="labels">Highest Degree Obtained</label> {{ editProfileForm.highestDegreeObtained(class="form-control input")  }} </div>
+                            <div class="col-md-12"> <label class="labels">Current Institution</label> {{ editProfileForm.currentInstitution(class="form-control input")  }} </div>
+                            <div class="col-md-12"> <label class="labels">City</label> {{ editProfileForm.city(class="form-control")  }} </div>
+                                                <div class="form-group">
+                                                        {% for error in editProfileForm.city.errors %}
+                                                            <div class="alert alert-danger" role="alert">{{ error }}</div>
+                                                        {% endfor  %}
+                                                </div>
+
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6"><label class="labels">State/Region</label>{{ editProfileForm.stateRegion(class="form-control input")  }} </div>
+                                       <div class="form-group">
+                                         {% for error in editProfileForm.stateRegion.errors %}
+                                             <div class="alert alert-danger" role="alert">{{ error }}</div>
+                                         {% endfor  %}
+                                      </div>
+                            <div class="col-md-6"><label class="labels">Country</label>{{ editProfileForm.country(class="form-control input")  }}</div>
+                                      <div class="form-group">
+                                         {% for error in editProfileForm.country.errors %}
+                                             <div class="alert alert-danger" role="alert">{{ error }}</div>
+                                         {% endfor  %}
+                                      </div>
+                        </div>
+                         <div class="form-group">
+                             {% for error in editProfileForm.submit.errors %}
+                                 <div class="alert alert-danger" role="alert">{{ error }}</div>
+                             {% endfor  %}
+                             {% for field, errors in editProfileForm.errors.iteritems() %}
+                                 <div class="alert alert-error">
+                                          <span class="text-danger">   {{ editProfileForm[field].label }}: {{ ', '.join(errors) }}</span>
+                                      </div>
+                             {% endfor %}
+                         </div>
+                        <div class="mt-5 text-center">
+                            {{ editProfileForm.submit( class="btn btn-primary" )}}
+                            {{ editProfileForm.hidden_tag() }}
+                            {% for error in editProfileForm.submit.errors %}
+                                 <div class="alert alert-danger" role="alert">{{ error }}</div>
+                             {% endfor  %}
+                        </div>
+
+                    {% if editProfileForm.errors %}
+                        <ul class="errors">
+                            {% for field_name, field_errors in editProfileForm.errors|dictsort if field_errors %}
+                                {% for error in field_errors %}
+                                    <li>{{ editProfileForm[field_name].label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    </div>
+            </div>
+            <div class="col-md-3">
+                 <div class="p-3 py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="text-right">My Reviews</h4>
                     </div>
 
+                           {% for x in listReviews[:8] %}
+                                 <div class="row">
+                                    <div class="row mt-3">
+                                        <div class="col-md-12"> University: {{ x.idUniversity }}</div>
+                                        <div class="col-md-12">{{ x.idReview }} | {{ x.reviewTitle }}</div>
+                                        <div class="col-md-12">{{ x.review[:35] }}...</div>
+
+                                             <i class="fas fa-remove"></i>
+                                            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('homePage')}}">
+                                                <div class="sidebar-brand-text mx-3">Delete Review</div>
+                                            </a>
+                                    </div>
+                                 </div>
+
+                            {% endfor %}
+                         <br>
+                            {% if listReviews|length >8 %}
+                             <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                            {% endif %}
+                     <div id="demo" class="collapse">
+                         <br>
+                            {% for x in listReviews[8:] %}
+                                 <div class="row">
+                                     <div class="col-md-3"><label class="labels">Title</label></div>
+                                     <div class="col-md-12">{{ x.idReview }} | {{ x.reviewTitle }}</div>
+                                 </div>
+                        {% endfor %}
+                        </div>
+                                <div class="row">
+                                     <div class="col-md-3"><label class="labels">Delete Review</label></div>
+                                        {{ deleteReviewForm.reviews(class="form-control input") }}
+                                        {{ deleteReviewForm.submit(class="btn btn-primary") }}
+                                        {{ deleteReviewForm.hidden_tag() }}
+                       </div>
+                </div>
+
             </div>
 
         </div>
+
     </div>
-    </div>
-    </div>
 
 
-
-<!-- End Edit Profile Form 2-->
-
-
-
-
-
-
+</div>
 
 </body>
 

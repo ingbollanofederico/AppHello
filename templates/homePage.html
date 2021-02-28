@@ -31,11 +31,17 @@
             </div>
 
             <div class="input-group-append">
-            {{ searchForm.submit(class="btn btn-primary") }}
-                {{ searchForm.hidden_tag() }}
+            {{ searchForm.submit(class="btn btn-primary") }}{{ searchForm.hidden_tag() }}
             </div>
+
         </div>
 
+
+            {% for field, errors in searchForm.errors.iteritems() %}
+                <div class="alert alert-error">
+                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
+                </div>
+            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -64,10 +70,10 @@
                 </form>
             </div>
         </li>
+  {% if 'logged_in' in session and session['logged_in'] == true %}
 
-
-        <nav class="topbar">
         <!-- Nav Item - Messages -->
+        <nav class="topbar">
         <li class="nav-item dropdown no-arrow mx-1">
             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -140,16 +146,14 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% if 'logged_in' in session and session['logged_in'] == true:%}
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['first name'] }}</span>
-                {% else %}
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Please Log In</span>
-                {% endif %}
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> Howdy {{ session['first name'] }}</span>
 
                 <img class="img-profile rounded-circle"
                      src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
                 >
             </a>
+
+
 
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -168,7 +172,7 @@
                 <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam=exam, searchMethod=searchMethod) }}">
                          <i class="fas fa-2x fa-cogs"></i>
                         My Reviews
                     </a>
@@ -176,7 +180,7 @@
 
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                         <a class="nav-link" href="{{ url_for('login') }}">
+                         <a class="nav-link" href="{{ url_for('logout') }}">
                          <i class="fas fa-2x fa-sign-out-alt"></i>
                            Log Out
                          </a>
@@ -185,11 +189,14 @@
             </div>
         </li>
         </nav>
-
+  {% else %}
+      <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
+  {% endif %}
     </ul>
 
 </nav>
 <!-- End of Topbar -->
+
 <!-- Begin Page Content -->
                 <div class="container-fluid">
 

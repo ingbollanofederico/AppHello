@@ -1,7 +1,6 @@
 {% extends "Layout/layout.html" %}
 
 {% block main %}
-
 <!-- TOPBAR - Included here for form purposes -->
 <nav class="navbar navbar-expand navbar-light bg-white  mb-4 static-top shadow ">
 
@@ -31,11 +30,17 @@
             </div>
 
             <div class="input-group-append">
-            {{ searchForm.submit(class="btn btn-primary") }}
-                {{ searchForm.hidden_tag() }}
+            {{ searchForm.submit(class="btn btn-primary") }}{{ searchForm.hidden_tag() }}
             </div>
+
         </div>
 
+
+            {% for field, errors in searchForm.errors.iteritems() %}
+                <div class="alert alert-error">
+                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
+                </div>
+            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -64,10 +69,10 @@
                 </form>
             </div>
         </li>
+  {% if 'logged_in' in session and session['logged_in'] == true %}
 
-
-        <nav class="topbar">
         <!-- Nav Item - Messages -->
+        <nav class="topbar">
         <li class="nav-item dropdown no-arrow mx-1">
             <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -140,16 +145,14 @@
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {% if 'logged_in' in session and session['logged_in'] == true:%}
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ session['first name'] }}</span>
-                {% else %}
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Please Log In</span>
-                {% endif %}
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> Howdy {{ session['first name'] }}</span>
 
                 <img class="img-profile rounded-circle"
                      src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
                 >
             </a>
+
+
 
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -168,7 +171,7 @@
                 <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam=exam, searchMethod=searchMethod) }}">
                          <i class="fas fa-2x fa-cogs"></i>
                         My Reviews
                     </a>
@@ -176,7 +179,7 @@
 
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                         <a class="nav-link" href="{{ url_for('login') }}">
+                         <a class="nav-link" href="{{ url_for('logout') }}">
                          <i class="fas fa-2x fa-sign-out-alt"></i>
                            Log Out
                          </a>
@@ -185,28 +188,29 @@
             </div>
         </li>
         </nav>
-
+  {% else %}
+      <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
+  {% endif %}
     </ul>
 
 </nav>
 <!-- End of Topbar -->
-
 
      <div class="container-fluid">
 
 
      <!-- Search Page dynamic results -->
         {% if element == "program" %}
-            {% for x in program %}
+
         <div class="row">
             <!-- Area -->
             <div class="col-xl-12 col-lg-7">
                 <div class="card shadow mb-4">
 
                     <!-- Card Header - Dropdown -->
-                    <div
-                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Results</h6>
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Programs List</h6>
+
                         <div class="dropdown no-arrow">
                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -222,19 +226,20 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Card Body -->
-                    <div class="card-body">
-                        <p>{{ x.courseName }}</p>
-                    </div>
+                    {% for x in program %}
+                        <!-- Card Body -->
+                            <div style="padding-left: 1em">
+                            <p>{{ x.courseName }}</p>
+                            </div>
+                    {%  endfor %}
                 </div>
             </div>
         </div>
-        {%  endfor %}
+
      {% endif %}
 
      {% if element == "university" %}
-            {% for x in university %}
+
         <div class="row">
             <!-- Area -->
             <div class="col-xl-12 col-lg-7">
@@ -243,7 +248,7 @@
                     <!-- Card Header - Dropdown -->
                     <div
                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Results</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Universities</h6>
                         <div class="dropdown no-arrow">
                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -259,19 +264,20 @@
                             </div>
                         </div>
                     </div>
+                       {% for x in university %}
+                                    <!-- Card Body -->
+                           <div style="padding-left: 1em">
 
-                    <!-- Card Body -->
-                    <div class="card-body">
-                        <p>{{ x.name }}</p>
-                    </div>
+                                        <p>{{ x.name }}</p>
+                           </div>
+                       {%  endfor %}
+
                 </div>
             </div>
         </div>
-        {%  endfor %}
      {% endif %}
 
      {% if element == "exam" %}
-            {% for x in exam %}
         <div class="row">
             <!-- Area -->
             <div class="col-xl-12 col-lg-7">
@@ -280,7 +286,7 @@
                     <!-- Card Header - Dropdown -->
                     <div
                         class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Results</h6>
+                        <h6 class="m-0 font-weight-bold text-primary">Exams</h6>
                         <div class="dropdown no-arrow">
                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -296,15 +302,15 @@
                             </div>
                         </div>
                     </div>
+                            {% for x in exam %}
+                                <div style="padding-left: 1em">
+                                    <p>{{ x.exam }}</p>
+                                </div>
+                            {%  endfor %}
 
-                    <!-- Card Body -->
-                    <div class="card-body">
-                        <p>{{ x.exam }}</p>
-                    </div>
                 </div>
             </div>
         </div>
-        {%  endfor %}
      {% endif %}
 
 
