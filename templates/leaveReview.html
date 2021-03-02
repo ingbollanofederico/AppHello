@@ -34,13 +34,6 @@
             </div>
 
         </div>
-
-
-            {% for field, errors in searchForm.errors.iteritems() %}
-                <div class="alert alert-error">
-                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
-                </div>
-            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -196,7 +189,6 @@
 </nav>
 <!-- End of Topbar -->
 
-<body>
 
 <div class="container imi-joingform">
 
@@ -423,21 +415,24 @@
                                                 <div class="form-group">
                                                     <div class="col-md-12">
                                                         Your Overall Rating
+
+
+                                                        <div>
                                                         <div id="full-stars-example-two">
                                                             <div class="rating-group">
-                                                                <input disabled checked class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0" type="radio">
-                                                                <label aria-label="1 star" class="rating__label" for="rating3-1"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
-                                                                <label aria-label="2 stars" class="rating__label" for="rating3-2"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
-                                                                <label aria-label="3 stars" class="rating__label" for="rating3-3"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
-                                                                <label aria-label="4 stars" class="rating__label" for="rating3-4"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
-                                                                <label aria-label="5 stars" class="rating__label" for="rating3-5"><i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
+                                                            {% for subfield in reviewForm.starRating %}
+                                                                <tr>
+
+                                                                    <label class="rating__label">{{ subfield}}<i class="rating__icon rating__icon--star fa fa-graduation-cap"></i></label>
+                                                                    <td>{{ subfield.label }}</td>
+
+                                                                </tr>
+                                                            {% endfor %}
                                                             </div>
                                                         </div>
+                                                        </div>
+
+
                                                     </div>
                                                 </div>
 
@@ -526,7 +521,7 @@
                         <!-- End First collapse -->
                           {% for field, errors in reviewForm.errors.iteritems() %}
                               <div class="alert alert-error">
-                                  <span class="text-danger">   {{ reviewForm[field].label }}: {{ ', '.join(errors) }}</span></br>
+                                  <span class="text-danger">   {{ reviewForm[field].label }}: {{ ', '.join(errors) }}</span>
                               </div>
                           {% endfor %}
 
@@ -543,12 +538,4 @@
 </div>
 
 
-</body>
-</html>
-
-
-
-</body>
-
-</html>
 {% endblock main %}

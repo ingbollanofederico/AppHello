@@ -70,6 +70,7 @@ class formReview(FlaskForm):
 
     ReviewTitle = StringField('Review', validators=[DataRequired(), Length(min=5, max=50)])
     Review = TextAreaField('Review', validators=[DataRequired(), Length(min=15, max=500)])
+    starRating = RadioField('Star Rating', choices = [1,2,3,4,5,], validators=[DataRequired()])
     submit = SubmitField('Submit Review')
 
 

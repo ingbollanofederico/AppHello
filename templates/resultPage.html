@@ -35,12 +35,6 @@
 
         </div>
 
-
-            {% for field, errors in searchForm.errors.iteritems() %}
-                <div class="alert alert-error">
-                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
-                </div>
-            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -1124,7 +1118,7 @@
 
 
                         {% else %}
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">To leave a review, please <a class="nav-link" href="{{ url_for('login') }}">Log In</a></span>
+                                <span >To leave a review, please <a class="btn btn-primary" href="{{ url_for('login') }}">Log In</a></span>
                         {% endif %}
                                    </div>
 

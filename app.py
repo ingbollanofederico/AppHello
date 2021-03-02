@@ -896,20 +896,21 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     if (program != "null"):
         # id program
         if (city == "All"):
-            idProgram = Program.query. \
+            program_list = Program.query. \
                 filter(and_(Program.academicDegree.ilike(academicDegree), Program.courseName.ilike(program),
                             Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
-            city = Program.query. \
-                filter(and_(Program.idProgram.ilike(idProgram)).group_by(Program.sedeC).all())
+            program_object = program_list[0]
+            idProgram = program_object.idProgram
+            city = Program.query.filter_by(idProgram=idProgram).all()[0].sedeC
         else:
             idProgram = Program.query. \
                 filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
                             Program.courseName.ilike(program),
-                            Program.idUniversity.ilike(university))).group_by(Program.courseName).all()
+                            Program.idUniversity.ilike(university))).group_by(Program.courseName).all()[0].idProgram
 
     if (exam != "null"):
         # id program and idexam
-        idExam = Exam.query.filter(and_(Exam.idProgram.ilike(idProgram), Exam.exam.ilike(exam)).group_by(exam)).all()
+        idExam = Exam.query.filter(and_(Exam.idProgram.ilike(idProgram), Exam.exam.ilike(exam))).all()[0].idExam
 
     idReview = int(record[0]) + 1
     idUser = session['user_id']
@@ -919,7 +920,7 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     timeStamp = datetime.datetime.now()
     # timeStamp =     datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    starRating = 3
+    starRating = reviewForm.starRating.data
 
     newReview = Review(idReview=idReview,
                        idUser=idUser,
