@@ -388,13 +388,13 @@
                                         <p>{{ reviews.timeStamp }}</p>
                                         <p>{{ reviews.review }}</p>
                                     </div>
-                                </div>
+                                    </div>
+
                             {%  endfor %}
                         {%  endfor %}
-                        {% if dictReviews[result.idUniversity]|length >5 %}
-                                <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
-                                <div id="demo" class="collapse"><br>
-                        {%endif %}
+                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                        <div id="demo" class="collapse"><br>
+
                             {% for result in resultList %}
                                 {% for reviews in dictReviews[result.idUniversity][5:] %}
 
@@ -481,11 +481,11 @@
                                         <p>{{ reviews.timeStamp }}</p>
                                         <p>{{ reviews.review }}</p>
                                     </div>
-                                </div>
+                                    </div>
                             {%  endfor %}
                         {%  endfor %}
-                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
-                            <div id="demo" class="collapse"><br>
+                                <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                                <div id="demo" class="collapse"><br>
                             {% for result in resultList %}
                                 {% for reviews in dictReviews[result.courseName][5:] %}
 
