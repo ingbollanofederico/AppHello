@@ -198,9 +198,6 @@
 <!-- End of Topbar -->
 
 
-<body>
-
-
 <div class="container imi-joingform">
 
 <!-- Start Edit Profile Form 2 -->
@@ -215,19 +212,12 @@
                     <span class="font-weight-bold">{{ session['first name'] }} {{ session['last name'] }}</span>
                     <span class="text-black-50"> {{ session['email'] }} </span>
                     <span class="text-gray-300">Your User id: {{ session['user_id'] }}</span>
-
-                    <div class="text-center">
-                        <!-- <a class="medium" href="{ url_for('forgot_password') }}">Forgot Password?</a> -->
-                        <a class="medium" href="forgot-password.html">Forgot Password?</a>
-
-                     </div>
-                      <form action="{{ url_for('editProfile')}}">
-                        <input type="submit" value="Edit Password" class="btn btn-primary" />
-                      </form>
                 </div>
 
             </div>
+
             <div class="col-md-5 border-right">
+                <form class="search" method="post">
                     <div class="p-3 py-5">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="text-right">Personal Information</h4>
@@ -243,57 +233,25 @@
                             <div class="col-md-12"> <label class="labels">Highest Degree Obtained</label> {{ editProfileForm.highestDegreeObtained(class="form-control input")  }} </div>
                             <div class="col-md-12"> <label class="labels">Current Institution</label> {{ editProfileForm.currentInstitution(class="form-control input")  }} </div>
                             <div class="col-md-12"> <label class="labels">City</label> {{ editProfileForm.city(class="form-control")  }} </div>
-                                                <div class="form-group">
-                                                        {% for error in editProfileForm.city.errors %}
-                                                            <div class="alert alert-danger" role="alert">{{ error }}</div>
-                                                        {% endfor  %}
-                                                </div>
-
+                            <div class="form-group">
+                            </div>
                         </div>
 
                         <div class="row mt-3">
                             <div class="col-md-6"><label class="labels">State/Region</label>{{ editProfileForm.stateRegion(class="form-control input")  }} </div>
-                                       <div class="form-group">
-                                         {% for error in editProfileForm.stateRegion.errors %}
-                                             <div class="alert alert-danger" role="alert">{{ error }}</div>
-                                         {% endfor  %}
-                                      </div>
                             <div class="col-md-6"><label class="labels">Country</label>{{ editProfileForm.country(class="form-control input")  }}</div>
-                                      <div class="form-group">
-                                         {% for error in editProfileForm.country.errors %}
-                                             <div class="alert alert-danger" role="alert">{{ error }}</div>
-                                         {% endfor  %}
-                                      </div>
                         </div>
-                         <div class="form-group">
-                             {% for error in editProfileForm.submit.errors %}
-                                 <div class="alert alert-danger" role="alert">{{ error }}</div>
-                             {% endfor  %}
-                             {% for field, errors in editProfileForm.errors.iteritems() %}
-                                 <div class="alert alert-error">
-                                          <span class="text-danger">   {{ editProfileForm[field].label }}: {{ ', '.join(errors) }}</span>
-                                      </div>
-                             {% endfor %}
-                         </div>
+
                         <div class="mt-5 text-center">
                             {{ editProfileForm.submit( class="btn btn-primary" )}}
                             {{ editProfileForm.hidden_tag() }}
-                            {% for error in editProfileForm.submit.errors %}
-                                 <div class="alert alert-danger" role="alert">{{ error }}</div>
-                             {% endfor  %}
                         </div>
-
-                    {% if editProfileForm.errors %}
-                        <ul class="errors">
-                            {% for field_name, field_errors in editProfileForm.errors|dictsort if field_errors %}
-                                {% for error in field_errors %}
-                                    <li>{{ editProfileForm[field_name].label }}: {{ error }}</li>
-                                {% endfor %}
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
                     </div>
+                </form>
             </div>
+
+
+
             <div class="col-md-3">
                  <div class="p-3 py-5">
                     <div class="d-flex justify-content-between align-items-center mb-3">
