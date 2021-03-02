@@ -390,11 +390,12 @@
                                     </div>
                                 </div>
                             {%  endfor %}
-                        {%  endfor %}
-                        {% if dictReviews[result.idUniversity]|length >5 %}
-                                <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
-                                <div id="demo" class="collapse"><br>
-                        {%endif %}
+
+                                {% if dictReviews[result.idUniversity]|length >5 %}
+                                        <button data-toggle="collapse" data-target="#demo" class="btn btn-primary">Show more Reviews</button>
+                                        <div id="demo" class="collapse"><br>
+                                {%endif %}
+                            {%  endfor %}
                             {% for result in resultList %}
                                 {% for reviews in dictReviews[result.idUniversity][5:] %}
 
