@@ -861,6 +861,10 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     idProgram = "null"
     idExam = "null"
 
+    university_orig = university
+    program_orig = program
+    city_orig = city
+
     # this is needed to show data about the object currently rendered and to fetch again ids of program and exam
 
     if (university != "null"):
@@ -909,8 +913,8 @@ def reviewValidator(reviewForm, city, academicDegree, university, program, exam,
     db.session.add(newReview)
     db.session.commit()
     conn.close()
-
-    return resultPage(searchMethod, city, academicDegree, university, program, exam)
+    return redirect( url_for('resultPage', searchMethod = searchMethod,
+                                            city=city_orig, academicDegree=academicDegree, university=university_orig, program=program_orig, exam = exam))
 
 
 # Mattia Edit
