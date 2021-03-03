@@ -80,7 +80,7 @@ class formEditProfile(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     highestDegreeObtained = StringField('Highest Degree Obtained')
     currentInstitution = StringField('Current Institution')
-    city = SelectField('City', choices=[])
+    city = SelectField('city', choices=[])
     stateRegion = StringField('State Region')
     country = StringField('Country')
     submit = SubmitField('Submit Changes')

@@ -158,21 +158,16 @@
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile') }}">
                          <i class="fas fa-2x fa-user"></i>
                         Edit Profile
                     </a>
-
-                    <!--
-                    working url for editProfile
-                     http://127.0.0.1:5000/editProfile/All/%25/102/null/null/%20Program?
-                    -->
                 </a>
 
                 <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam=exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile') }}">
                          <i class="fas fa-2x fa-cogs"></i>
                         My Reviews
                     </a>

@@ -35,13 +35,6 @@
             </div>
 
         </div>
-
-
-            {% for field, errors in searchForm.errors.iteritems() %}
-                <div class="alert alert-error">
-                 <span class="text-danger">   {{ searchForm[field].label }}: {{ ', '.join(errors) }}</span></br>
-                </div>
-            {% endfor %}
     </form>
 
     <!-- Topbar Navbar to Edit Profile or Logout -->
@@ -158,21 +151,17 @@
             <!-- Dropdown - User Information -->
             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam = exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile') }}">
                          <i class="fas fa-2x fa-user"></i>
                         Edit Profile
                     </a>
 
-                    <!--
-                    working url for editProfile
-                     http://127.0.0.1:5000/editProfile/All/%25/102/null/null/%20Program?
-                    -->
                 </a>
 
                 <div class="dropdown-divider"></div>
 
                 <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile', city=city, academicDegree=academicDegree, university=university, program=program, exam=exam, searchMethod=searchMethod) }}">
+                    <a class="nav-link" href="{{ url_for('editProfile') }}">
                          <i class="fas fa-2x fa-cogs"></i>
                         My Reviews
                     </a>
@@ -217,34 +206,55 @@
             </div>
 
             <div class="col-md-5 border-right">
-                <form class="search" method="post">
+                <form class="user" method="post">
                     <div class="p-3 py-5">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h4 class="text-right">Personal Information</h4>
                         </div>
 
                         <div class="row mt-2">
-                            <div class="col-md-6"> <label class="labels">Name</label> {{ editProfileForm.firstName(class="form-control input")  }} </div>
-                            <div class="col-md-6"> <label class="labels">Surname</label> {{ editProfileForm.lastName(class="form-control input")  }} </div>
+                            <div class="col-md-6"> <label class="labels">Name</label> {{ editProfileForm.firstName(class="form-control input", placeholder=dbUser.firstName)  }} </div>
+                            <div class="col-md-6"> <label class="labels">Surname</label> {{ editProfileForm.lastName(class="form-control input", placeholder=dbUser.lastName)  }} </div>
                         </div>
+                        {% for error in editProfileForm.firstName.errors %}
+                                <div class="alert alert-danger" role="alert">First name: {{ error }}</div>
+                        {% endfor  %}
+                        {% for error in editProfileForm.lastName.errors %}
+                                <div class="alert alert-danger" role="alert">Last name: {{ error }}</div>
+                        {% endfor  %}
 
                         <div class="row mt-3">
                             <div class="col-md-12"> <label class="labels">Email</label> {{ editProfileForm.email(class="form-control input", placeholder=dbUser.email)  }} </div>
-                            <div class="col-md-12"> <label class="labels">Highest Degree Obtained</label> {{ editProfileForm.highestDegreeObtained(class="form-control input")  }} </div>
-                            <div class="col-md-12"> <label class="labels">Current Institution</label> {{ editProfileForm.currentInstitution(class="form-control input")  }} </div>
-                            <div class="col-md-12"> <label class="labels">City</label> {{ editProfileForm.city(class="form-control")  }} </div>
+                            {% for error in editProfileForm.email.errors %}
+                                <div class="alert alert-danger" role="alert">Email: {{ error }}</div>
+                            {% endfor  %}
+
+                            <div class="col-md-12"> <label class="labels">Highest Degree Obtained</label> {{ editProfileForm.highestDegreeObtained(class="form-control input", placeholder=dbUser.highestDegreeObtained)  }} </div>
+                            {% for error in editProfileForm.highestDegreeObtained.errors %}
+                                <div class="alert alert-danger" role="alert">highestDegreeObtained: {{ error }}</div>
+                            {% endfor  %}
+
+                            <div class="col-md-12"> <label class="labels">Current Institution</label> {{ editProfileForm.currentInstitution(class="form-control input", placeholder=dbUser.currentInstitution)  }} </div>
+                            {% for error in editProfileForm.currentInstitution.errors %}
+                                <div class="alert alert-danger" role="alert">currentInstitution: {{ error }}</div>
+                            {% endfor  %}
+
+                            <div class="col-md-12"> <label class="labels">City</label> {{ editProfileForm.city(class="form-control", placeholder=dbUser.city)  }} </div>
+                            {% for error in editProfileForm.city.errors %}
+                                <div class="alert alert-danger" role="alert">city: {{ error }}</div>
+                            {% endfor  %}
                             <div class="form-group">
+
                             </div>
                         </div>
 
                         <div class="row mt-3">
-                            <div class="col-md-6"><label class="labels">State/Region</label>{{ editProfileForm.stateRegion(class="form-control input")  }} </div>
-                            <div class="col-md-6"><label class="labels">Country</label>{{ editProfileForm.country(class="form-control input")  }}</div>
+                            <div class="col-md-6"><label class="labels">State/Region</label>{{ editProfileForm.stateRegion(class="form-control input",placeholder=dbUser.stateRegion)  }} </div>
+                            <div class="col-md-6"><label class="labels">Country</label>{{ editProfileForm.country(class="form-control input",placeholder=dbUser.country)  }}</div>
                         </div>
 
                         <div class="mt-5 text-center">
-                            {{ editProfileForm.submit( class="btn btn-primary" )}}
-                            {{ editProfileForm.hidden_tag() }}
+                        {{ editProfileForm.submit(class="btn btn-primary") }}{{ editProfileForm.hidden_tag() }}
                         </div>
                     </div>
                 </form>
@@ -299,10 +309,6 @@
         </div>
 
     </div>
-
-
 </div>
-
-</body>
 
 {% endblock main %}

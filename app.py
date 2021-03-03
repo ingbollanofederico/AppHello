@@ -748,6 +748,7 @@ def editProfileFunction():
     editProfileForm = formEditProfile()
 
     '''get all cities in the db & add them to the searchForm'''
+    '''get all cities in the db & adding them to the searchForm'''
     cities = Program.query.order_by(Program.sedeP)
     myCities = []
     for x in cities:
@@ -757,10 +758,7 @@ def editProfileFunction():
     myCities.sort()
     editProfileForm.city.choices = myCities
 
-    # query che popola he poola il form con l'id nella session'
-
-    user = User.query.filter(User.id == session['user_id']).first()
-
+    '''
     # passa USER nel html
     if user:
         id = session['user_id']
@@ -769,10 +767,9 @@ def editProfileFunction():
         editProfileForm.lastName.data = user.lastName
         editProfileForm.highestDegreeObtained.data = user.highestDegreeObtained
         editProfileForm.currentInstitution.data = user.currentInstitution
-        editProfileForm.city.data = user.city
         editProfileForm.stateRegion.data = user.stateRegion
         editProfileForm.country.data = user.country
-
+'''
     return editProfileForm
 
 
@@ -807,36 +804,35 @@ def deleteReviewValidator(deleteReviewForm):
 
 
 # Mattia Edit
-def editProfileValidator(editProfileForm):
+def editProfileValidator(editProfileForm,dbUser):
     conn = db_connector.create_connection()
 
-    id = session['user_id']
+    id = int(session['user_id'])
     email = editProfileForm.email.data
     firstName = editProfileForm.firstName.data
     lastName = editProfileForm.lastName.data
     highestDegreeObtained = editProfileForm.highestDegreeObtained.data
+    if highestDegreeObtained == "": highestDegreeObtained = dbUser.highestDegreeObtained
     currentInstitution = editProfileForm.currentInstitution.data
+    if currentInstitution == "": currentInstitution = dbUser.currentInstitution
     selectedCity = editProfileForm.city.data
     stateRegion = editProfileForm.stateRegion.data
+    if stateRegion == "": stateRegion = dbUser.stateRegion
     country = editProfileForm.country.data
+    if country == "": country = dbUser.country
 
     cursor = conn.cursor()
-    cursor.execute("UPDATE user SET firstName=%s, lastName=%s, email=%s"
-                   "highestDegreeObtained= %s, currentInstitution = %s,"
-                   "city=%s, stateRegion=%s, country=%s, "
-                   "WHERE id=%d",
-                   firstName, lastName, email, highestDegreeObtained, currentInstitution, selectedCity, stateRegion,
-                   country, id)
-
-    db.session.update()
-    db.session.commit()
-    # db.close()  ?
+    # cursor.execute("""UPDATE user SET firstName='""" + firstName + """', lastName='""" + lastName + """',  highestDegreeObtained= '""" + highestDegreeObtained + """', currentInstitution = '""" + currentInstitution + """', city='""" + selectedCity + """', stateRegion='""" + stateRegion + """', country='""" + country + """' WHERE id='""" + id + """'""")
+    cursor.execute(
+        'UPDATE user SET firstName = ?, lastName = ?, email = ?, highestDegreeObtained = ?, currentInstitution = ?, city= ?, stateRegion = ?, country = ? WHERE id = ? ',
+        (firstName, lastName, email, highestDegreeObtained, currentInstitution, selectedCity, stateRegion, country, id))
+    conn.commit()
     conn.close()
 
     flash('Profile Successfully updated', 'success')
 
     #    return editProfile(city, academicDegree, university, program, exam, searchMethod)
-    return render_template('editProfile.html')
+    return redirect(url_for('editProfile'))
 
 
 # Mattia Edit
@@ -852,7 +848,7 @@ def editProfile():
         return searchValidator(searchForm)
 
     conn = db_connector.create_connection()
-    dbUser = User.query.filter(User.id == session['user_id'])
+    dbUser = User.query.filter(User.id == session['user_id']).first()
     conn.close()
 
     '''edit Profile Function'''
@@ -862,7 +858,9 @@ def editProfile():
     listReviews = Review.query.filter_by(idUser=session['user_id']).order_by(Review.starRating.desc()).all()
 
     if editProfileForm.validate_on_submit():
-        return editProfileValidator(editProfileForm)
+        return editProfileValidator(editProfileForm, dbUser)
+
+        #return editProfileValidator(editProfileForm)
 
     deleteReviewForm = deleteReviewFunction(listReviews)
 
