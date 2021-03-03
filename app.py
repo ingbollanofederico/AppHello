@@ -742,13 +742,10 @@ def exams():
 
     return render_template('infoPage.html', exam=exam, searchForm=searchForm, element="exam")
 
-
-# Mattia Edit
 def editProfileFunction():
     editProfileForm = formEditProfile()
 
-    '''get all cities in the db & add them to the searchForm'''
-    '''get all cities in the db & adding them to the searchForm'''
+    '''get all cities in the db & add them to the editProfileForm'''
     cities = Program.query.order_by(Program.sedeP)
     myCities = []
     for x in cities:
@@ -758,52 +755,9 @@ def editProfileFunction():
     myCities.sort()
     editProfileForm.city.choices = myCities
 
-    '''
-    # passa USER nel html
-    if user:
-        id = session['user_id']
-        editProfileForm.email.data = user.email
-        editProfileForm.firstName.data = user.firstName
-        editProfileForm.lastName.data = user.lastName
-        editProfileForm.highestDegreeObtained.data = user.highestDegreeObtained
-        editProfileForm.currentInstitution.data = user.currentInstitution
-        editProfileForm.stateRegion.data = user.stateRegion
-        editProfileForm.country.data = user.country
-'''
     return editProfileForm
 
 
-# Mattia edit
-def deleteReviewFunction(listReviews):
-    deleteReviewForm = formDeleteReview()
-
-    myReviews = []
-
-    for x in listReviews:
-        myReviews.append(x.idReview)
-
-    deleteReviewForm.reviews.choices = myReviews
-    return deleteReviewForm
-
-
-# Mattia Edit
-def deleteReviewValidator(deleteReviewForm):
-    conn = db_connector.create_connection()
-
-    idReview = deleteReviewForm.reviews.data
-
-    cursor = conn.cursor()
-    cursor.execute("DELETE FROM review WHERE "
-                   "WHERE idReview=%d",
-                   idReview)
-
-    db.session.update()
-    db.session.commit()
-    # db.close()  ?
-    conn.close()
-
-
-# Mattia Edit
 def editProfileValidator(editProfileForm,dbUser):
     conn = db_connector.create_connection()
 
@@ -831,11 +785,35 @@ def editProfileValidator(editProfileForm,dbUser):
 
     flash('Profile Successfully updated', 'success')
 
-    #    return editProfile(city, academicDegree, university, program, exam, searchMethod)
     return redirect(url_for('editProfile'))
 
+# Mattia edit
+def deleteReviewFunction(listReviews):
+    deleteReviewForm = formDeleteReview()
+
+    myReviews = []
+
+    for x in listReviews:
+        myReviews.append(x.idReview)
+
+    deleteReviewForm.reviews.choices = myReviews
+
+    return deleteReviewForm
 
 # Mattia Edit
+def deleteReviewValidator(deleteReviewForm):
+    conn = db_connector.create_connection()
+
+    idReview = int(deleteReviewForm.reviews.data)
+
+    cursor = conn.cursor()
+    cursor.execute(
+        'DELETE FROM review WHERE idReview = ? ', (idReview, ) )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('editProfile'))
+
 @app.route('/editProfile', methods=['POST', 'GET'])
 def editProfile():
     if 'logged_in' not in session or session['logged_in'] == False:
@@ -860,8 +838,6 @@ def editProfile():
     if editProfileForm.validate_on_submit():
         return editProfileValidator(editProfileForm, dbUser)
 
-        #return editProfileValidator(editProfileForm)
-
     deleteReviewForm = deleteReviewFunction(listReviews)
 
     if deleteReviewForm.validate_on_submit():
@@ -871,7 +847,6 @@ def editProfile():
                            listReviews=listReviews, dbUser=dbUser, deleteReviewForm=deleteReviewForm)
 
 
-# Mattia Edit
 def reviewValidator(reviewForm, city, academicDegree, university, program, exam, searchForm, searchMethod):
     conn = db_connector.create_connection()
 
