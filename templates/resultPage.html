@@ -1089,7 +1089,7 @@
                                         </div>
  <!-- leave review button -->
                         {% if 'logged_in' in session and session['logged_in'] == true %}
-
+                            {% if searchMethod == "EndSearch" or searchMethod == "EndSearchUniversity" or searchMethod == "EndSearchProgram"  %}
                                 <!-- University, null null  -->
                                     {% if university != "null" and program == "null" and exam == "null" %}
                                         <form action="{{ url_for('leaveReview',
@@ -1111,7 +1111,7 @@
                                         </form>
                                     {% endif%}
 
-
+                            {% endif %}
                         {% else %}
                                 <span >To leave a review, please <a class="btn btn-primary" href="{{ url_for('login') }}">Log In</a></span>
                         {% endif %}
