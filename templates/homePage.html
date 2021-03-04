@@ -70,227 +70,206 @@
                 </form>
             </div>
         </li>
-  {% if 'logged_in' in session and session['logged_in'] == true %}
 
-        <!-- Nav Item - Messages -->
-        <nav class="topbar">
-        <li class="nav-item dropdown no-arrow mx-1">
-            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-envelope fa-fw"></i>
-                <!-- Counter - Messages -->
-                <span class="badge badge-danger badge-counter">7</span>
-            </a>
-            <!-- Dropdown - Messages -->
-            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="messagesDropdown">
-                <h6 class="dropdown-header">
-                    Message Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
+        {% if 'logged_in' in session and session['logged_in'] == true %}
 
-                        <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_1.svg') }}"
-                            alt="">
-                        <div class="status-indicator bg-success"></div>
-                    </div>
-                    <div class="font-weight-bold">
-                        <div class="text-truncate">Irene liked your review about Politecnico di Torino</div>
-                        <div class="small text-gray-500">Irene Fowler · 58m</div>
-                    </div>
+            <!-- Nav Item - Messages -->
+            <nav class="topbar">
+            <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-envelope fa-fw"></i>
+                    <!-- Counter - Messages -->
+                    <span class="badge badge-danger badge-counter">7</span>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_2.svg') }}"
-                            alt="">
-                        <div class="status-indicator"></div>
-                    </div>
-                    <div>
-                        <div class="text-truncate">
-                            Leonardo commented on your review about Politecnico di Torino
+                <!-- Dropdown - Messages -->
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                    aria-labelledby="messagesDropdown">
+                    <h6 class="dropdown-header">
+                        Message Center
+                    </h6>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+
+                            <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_1.svg') }}"
+                                alt="">
+                            <div class="status-indicator bg-success"></div>
                         </div>
-                        <div class="small text-gray-500">Leonardo Morris · 1d</div>
-                    </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_3.svg') }}"
-                            alt="">
-                        <div class="status-indicator bg-warning"></div>
-                    </div>
-                    <div>
-                        <div class="text-truncate">
-                            Tommaso commented on your review about Politecnico di Torino
+                        <div class="font-weight-bold">
+                            <div class="text-truncate">Irene liked your review about Politecnico di Torino</div>
+                            <div class="small text-gray-500">Irene Fowler · 58m</div>
                         </div>
-                        <div class="small text-gray-500">Tommaso JP · 2d</div>
-                    </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                            alt="">
-                        <div class="status-indicator bg-success"></div>
-                    </div>
-                    <div>
-                        <div class="text-truncate">Do you enjoy AppHello? Leave a review now!</div>
-                        <div class="small text-gray-500">Odino Brigante · 2w</div>
-                    </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-            </div>
-        </li>
-
-        </nav>
-        <!-- Nav Item - User Information -->
-        <nav class="topbar">
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> Howdy {{ session['first name'] }}</span>
-
-                <img class="img-profile rounded-circle"
-                     src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
-                >
-            </a>
-
-
-
-            <!-- Dropdown - User Information -->
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile') }}">
-                         <i class="fas fa-2x fa-user"></i>
-                        Edit Profile
                     </a>
-                </a>
-
-                <div class="dropdown-divider"></div>
-
-                <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile') }}">
-                         <i class="fas fa-2x fa-cogs"></i>
-                        My Reviews
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_2.svg') }}"
+                                alt="">
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div>
+                            <div class="text-truncate">
+                                Leonardo commented on your review about Politecnico di Torino
+                            </div>
+                            <div class="small text-gray-500">Leonardo Morris · 1d</div>
+                        </div>
                     </a>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_3.svg') }}"
+                                alt="">
+                            <div class="status-indicator bg-warning"></div>
+                        </div>
+                        <div>
+                            <div class="text-truncate">
+                                Tommaso commented on your review about Politecnico di Torino
+                            </div>
+                            <div class="small text-gray-500">Tommaso JP · 2d</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
+                                alt="">
+                            <div class="status-indicator bg-success"></div>
+                        </div>
+                        <div>
+                            <div class="text-truncate">Do you enjoy AppHello? Leave a review now!</div>
+                            <div class="small text-gray-500">Odino Brigante · 2w</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                </div>
+            </li>
+
+            </nav>
+            <!-- Nav Item - User Information -->
+            <nav class="topbar">
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small"> {{ session['first name'] }} {{ session['last name'] }}</span>
+
+                    <img class="img-profile rounded-circle"
+                         src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
+                    >
                 </a>
 
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                         <a class="nav-link" href="{{ url_for('logout') }}">
-                         <i class="fas fa-2x fa-sign-out-alt"></i>
-                           Log Out
-                         </a>
-                </a>
 
-            </div>
-        </li>
-        </nav>
-  {% else %}
-      <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
-  {% endif %}
+
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="#">
+                        <a class="nav-link" href="{{ url_for('editProfile') }}">
+                             <i class="fas fa-2x fa-user"></i>
+                            Edit Profile
+                        </a>
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a class="dropdown-item" href="#">
+                        <a class="nav-link" href="{{ url_for('editProfile') }}">
+                             <i class="fas fa-2x fa-cogs"></i>
+                            My Reviews
+                        </a>
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                             <a class="nav-link" href="{{ url_for('logout') }}">
+                             <i class="fas fa-2x fa-sign-out-alt"></i>
+                               Log Out
+                             </a>
+                    </a>
+
+                </div>
+            </li>
+            </nav>
+
+        {% else %}
+
+            <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
+
+        {% endif %}
     </ul>
 
 </nav>
 <!-- End of Topbar -->
 
 <!-- Begin Page Content -->
-                <div class="container-fluid">
+    <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+        </div>
+
+        <!-- Content Row -->
+        <div class="row">
+
+            <!-- All universities -->
+            <div class="col-xl-12 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <a href="universities">
+                            <div class="col">
+                                    <i class="fas fa-university fa-7x" ></i>
+                            </div>
+                            </a>
+                            <div class="col">
+                                <a href="universities">
+                                <div class="h3 mb-2 font-weight-bold text-gray-800" style="text-align: center">Discover all Universities</div>
+                                </a>
+                            </div>
+                            <div class="col"></div>
+                        </div>
                     </div>
-
-                    <!-- Content Row -->
-                    <div class="row">
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-12 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <a href="universities">
-                                        <div class="col">
-                                                <i class="fas fa-university fa-7x" ></i>
-                                           <!-- <img style="width: 320px" src="{{ url_for('static',filename='assets/img/universities.png') }}"> -->
-
-                                        </div>
-                                        </a>
-                                        <div class="col">
-                                            <a href="universities">
-                                            <div class="h3 mb-2 font-weight-bold text-gray-800" style="text-align: center">Discover all Universities</div>
-                                            </a>
-                                        </div>
-                                        <div class="col"></div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-12 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                                    <a href="programs">
-                                                         <div class="col">
-                                                            <i class="fas fa-graduation-cap fa-7x"></i>
-                                                   <!-- <img style="width: 320px" src="{{ url_for('static',filename='assets/img/programs.png') }}"> -->
-                                                        </div>
-                                                    </a>
-                                                <div class="col">
-                                                    <a href="programs">
-                                                        <div class="h3 mb-2 font-weight-bold text-gray-800" style="text-align: center">Discover all Programs</div>
-                                                    </a>
-                                                </div>
-
-                                                <div class="col">
-
-                                                </div>
-
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-12 col-md-7 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                           <a href="exams">
-                                                <div class="col mr-2">
-
-                                                         <i class="fas fa-book fa-7x"></i>
-
-                                                  <!--  <img style="width: 320px" src="{{ url_for('static',filename='assets/img/exams.png') }}"> -->
-
-                                                </div>
-                                           </a>
-
-                                            <div class="col">
-                                                 <a href="exams">
-                                                    <div class="h3 mb-2 font-weight-bold text-gray-800" style="text-align: center">Discover all Exams</div>
-                                                </a>
-                                            </div>
-
-
-                                            <div class="col"></div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-
-
-
                 </div>
-                <!-- /.container-fluid -->
+            </div>
+
+            <!-- All Programs -->
+            <div class="col-xl-12 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <a href="programs">
+                                 <div class="col">
+                                    <i class="fas fa-graduation-cap fa-7x"></i>
+                                </div>
+                            </a>
+                            <div class="col">
+                                <a href="programs">
+                                    <div class="h3 mb-2 font-weight-bold text-gray-800" style="text-align: center">Discover all Programs</div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Exams -->
+            <div class="col-xl-12 col-md-7 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                               <a href="exams">
+                                    <div class="col mr-2">
+                                        <i class="fas fa-book fa-7x"></i>
+                                    </div>
+                               </a>
+
+                                <div class="col">
+                                     <a href="exams">
+                                        <div class="h3 mb-2 font-weight-bold text-gray-800" style="text-align: center">Discover all Exams</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+        <!-- /.container-fluid -->
 {% endblock main %}

@@ -46,26 +46,9 @@ class User(db.Model):
     permissions_id = db.Column(db.Integer, db.ForeignKey('permissions.id'))
     reviews = db.relationship('Review', backref='User')  # only here, not in the db
 
-    # Token for password reset
-    def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.email}).decode('utf-8')
-
-    @staticmethod
-    def verify_reset_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
-        try:
-            user_id = s.loads(token)['user_id']
-        except:
-            return None
-        return User.query.get(user_id)
-
-    def __repr__(self):
-        return "<User %r>" % self.firstName
-
 
 from model import Permissions, Program, University, Exam, Review
-from form import formRegistration, loginForm, forgotPassword, formSearch, formReview, formEditProfile, formDeleteReview
+from form import formRegistration, loginForm, formSearch, formReview, formEditProfile, formDeleteReview
 
 
 @app.route('/')
@@ -107,20 +90,27 @@ def searchValidator(searchForm):
     resultList = []
     searchForm2 = searchFunction()
 
-    if (city == "All"):
-        if (searchMethod == "University"):
-            if (searchText == ""):
-                # search result
-                resultList = University.query.order_by(University.name).all()
-                # review
+    # Start of the search engine. The search engine is composed by 2 main functions: searchValidator and ResultValidator
+    # SearchValidator implements the logic of the different type of researches that an user can do:
+    # searching a university, a specific degree course or a specific exam
+    # ResultValidator implements the logic of the different type of choices that the user made and match them with the relative reviews.
+    # The ResultValidator is the powerful logic that connects reviews, information regarding universities, degree courses and exam and
+    # the possibility of the user to interact with the platform by contributing with reviews and opinions
 
+    # SearchValidator: the following code explore all the possible combination made by the user and the filter applied to the research
+    # The output of this function is a result list with the elements researched and filtered by the user
+
+    if city == "All":
+        if searchMethod == "University":
+            if searchText == "":
+                resultList = University.query.order_by(University.name).all()
             else:
                 searchText = "%" + searchText + "%"
                 resultList = University.query.filter(
                     or_(University.name.ilike(searchText), University.nickname.ilike(searchText))).group_by(
                     University.name).all()
-        if (searchMethod == "Program"):
-            if (searchText == ""):
+        if searchMethod == "Program":
+            if searchText == "":
                 resultList = Program.query.filter(Program.academicDegree.ilike(academicDegree)).group_by(
                     Program.courseName).all()
             else:
@@ -129,8 +119,8 @@ def searchValidator(searchForm):
                                                        or_(Program.courseName.ilike(searchText),
                                                            Program.className.ilike(searchText)))).group_by(
                     Program.courseName).all()
-        if (searchMethod == "Exam"):
-            if (searchText == ""):
+        if searchMethod == "Exam":
+            if searchText == "":
                 resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
                     filter(Program.academicDegree.ilike(academicDegree)).group_by(Exam.exam).all()
             else:
@@ -139,8 +129,8 @@ def searchValidator(searchForm):
                     filter(and_(Program.academicDegree.ilike(academicDegree), Exam.exam.ilike(searchText))).group_by(
                     Exam.exam).all()
     else:
-        if (searchMethod == "University"):
-            if (searchText == ""):
+        if searchMethod == "University":
+            if searchText == "":
                 resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
                     filter(Program.sedeP.ilike(city)).all()
             else:
@@ -148,8 +138,8 @@ def searchValidator(searchForm):
                 resultList = University.query.join(Program, University.idUniversity == Program.idUniversity). \
                     filter(and_(Program.sedeP.ilike(city),
                                 or_(University.name.ilike(searchText), University.nickname.ilike(searchText)))).all()
-        if (searchMethod == "Program"):
-            if (searchText == ""):
+        if searchMethod == "Program":
+            if searchText == "":
                 resultList = Program.query.filter(
                     and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree))).group_by(
                     Program.courseName).all()
@@ -159,9 +149,8 @@ def searchValidator(searchForm):
                     filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
                                 or_(Program.courseName.ilike(searchText),
                                     Program.className.ilike(searchText)))).group_by(Program.courseName).all()
-
-        if (searchMethod == "Exam"):
-            if (searchText == ""):
+        if searchMethod == "Exam":
+            if searchText == "":
                 resultList = Exam.query.join(Program, Exam.idProgram == Program.idProgram). \
                     filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree))).group_by(
                     Exam.exam).all()
@@ -171,7 +160,12 @@ def searchValidator(searchForm):
                     filter(and_(Program.sedeP.ilike(city), Program.academicDegree.ilike(academicDegree),
                                 Exam.exam.ilike(searchText))).group_by(Exam.exam).all()
 
-    if (len(resultList) == 0):
+    # The following section asses whether the search made by the user found any possible matches in the db.
+    # In case there are no matches: the webpage will show an alert message inviting to try a new search
+    # In case there are matches in the DB: the algorithm will dive depp and search for all the reviews present in the system for the choice made.
+    # For each element of the research found on the DB, the logic will try to match all the review present for that specific element regardless the level of the hierarchy
+
+    if len(resultList) == 0:
         flash('Your search does not match any information. Please try again!', 'warning')
         return render_template('searchPage.html', resultList=resultList, searchForm=searchForm2,
                                searchMethod=searchMethod, city=city, acedemicDegree=academicDegree)
@@ -179,16 +173,16 @@ def searchValidator(searchForm):
         firstSearch = searchMethod
         dictReviews = {}
 
-        if (firstSearch == "University" or firstSearch == "Program" or firstSearch == "Exam"):
+        if firstSearch == "University" or firstSearch == "Program" or firstSearch == "Exam":
             for x in resultList:
-                if (firstSearch == "University"):
+                if firstSearch == "University":
 
                     reviewList = Review.query.join(University, University.idUniversity == Review.idUniversity). \
                         filter_by(idUniversity=x.idUniversity).order_by(Review.starRating.desc()).all()
 
                     dictReviews[x.idUniversity] = reviewList
 
-                elif (firstSearch == "Program"):
+                elif firstSearch == "Program":
 
                     reviewList = Review.query.join(Program, Program.idProgram == Review.idProgram).join(University,
                                                                                                         University.idUniversity == Program.idUniversity). \
@@ -196,7 +190,7 @@ def searchValidator(searchForm):
 
                     dictReviews[x.courseName] = reviewList
 
-                elif (firstSearch == "Exam"):
+                elif firstSearch == "Exam":
 
                     reviewList = Review.query.join(Exam, Exam.idExam == Review.idExam).join(Program,
                                                                                             Exam.idProgram == Program.idProgram).join(
@@ -208,7 +202,10 @@ def searchValidator(searchForm):
         numberOfReviews = 0
         dictRatingReviews = {}
 
-        if (searchMethod == "University"):
+        # This part of the code aggregates the all review for each element of the dictionary and calculates the
+        # mathematical average of the star reviews given to that specific element.
+
+        if searchMethod == "University":
             for result in resultList:
                 numberOfReviews = len(dictReviews[result.idUniversity])
                 averageValue = 0
@@ -219,15 +216,15 @@ def searchValidator(searchForm):
                 star5 = 0.0
                 for review in dictReviews[result.idUniversity]:
                     averageValue = averageValue + review.starRating
-                    if (review.starRating <= 1):
+                    if review.starRating <= 1:
                         star1 = star1 + 1
-                    elif (review.starRating > 1 and review.starRating <= 2):
+                    elif review.starRating > 1 and review.starRating <= 2:
                         star2 = star2 + 1
-                    elif (review.starRating > 2 and review.starRating <= 3):
+                    elif review.starRating > 2 and review.starRating <= 3:
                         star3 = star3 + 1
-                    elif (review.starRating > 3 and review.starRating <= 4):
+                    elif review.starRating > 3 and review.starRating <= 4:
                         star4 = star4 + 1
-                    elif (review.starRating > 4 and review.starRating <= 5):
+                    elif review.starRating > 4 and review.starRating <= 5:
                         star5 = star5 + 1
 
                 if averageValue > 0:
@@ -241,7 +238,7 @@ def searchValidator(searchForm):
                 dictRatingReviews[result.idUniversity] = [round(averageValue, 2), numberOfReviews, star1, star2, star3,
                                                           star4, star5]
 
-        elif (searchMethod == "Program"):
+        elif searchMethod == "Program":
             for result in resultList:
                 numberOfReviews = len(dictReviews[result.courseName])
                 averageValue = 0
@@ -274,7 +271,7 @@ def searchValidator(searchForm):
                 dictRatingReviews[result.courseName] = [round(averageValue, 2), numberOfReviews, star1, star2, star3,
                                                         star4, star5]
 
-        elif (searchMethod == "Exam"):
+        elif searchMethod == "Exam":
             for result in resultList:
                 numberOfReviews = len(dictReviews[result.exam])
                 averageValue = 0
@@ -1040,50 +1037,7 @@ def login():
     return render_template('login.html', login_form=login_form)
 
 
-@app.route('/forgot-password', methods=['POST', 'GET'])
-def forgot_password():
-    if 'logged_in' in session:
-        return redirect(url_for('homePage'))
 
-    forgot_password_form = forgotPassword()
-    if forgot_password_form.validate_on_submit():
-        user_info = User.query.filter_by(email=forgot_password_form.email.data).first()
-        if user_info:
-            token = user_info.get_reset_token()
-            sendmail(forgot_password_form.email.data,
-                     'Reset Password',
-                     'reset_mail',
-                     firstName=user_info.firstName,
-                     email=forgot_password_form.email.data,
-                     password=user_info.password,
-                     token=token)
-            flash('An email with instructions to reset your password has been sent to the specified account.', 'info')
-        else:
-            flash('User not found. Please check again the e-mail or register a new account.', 'danger')
-
-    return render_template('forgot-password.html', forgot_password_form=forgot_password_form)
-
-
-@app.route('/reset_password/<token>', methods=['POST', 'GET'])
-def reset_password(token):
-    if 'logged_in' in session:
-        return redirect(url_for('homePage'))
-
-    user = User.verify_reset_token(token)
-    if user is None:
-        flash('Expired or invalid token', 'warning')
-        return redirect(url_for('forgot-password'))
-
-    reset_password_form = forgotPassword()
-    if reset_password_form.validate_on_submit():
-        password_1 = bcrypt.generate_password_hash(reset_password_form.password.data).encode('utf-8')
-        pwd = password_1
-        db.get_engine().connect().execute("""UPDATE user
-                                                     SET pwd = '""" + pwd + """'
-                                                     WHERE id = '""" + user.id + """'""")
-        flash('Your password has been updated! You are now able to log in', 'success')
-        return redirect(url_for('login'))
-    return render_template('reset_password.html', title='Reset Password', reset_password_form=reset_password_form)
 
 
 def sendmail(to, subject, template, **kwargs):

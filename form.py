@@ -31,12 +31,6 @@ class loginForm(FlaskForm):
     password = PasswordField('Password', validators=[Length(min=3, max=15), DataRequired()])
     submit = SubmitField('Login')
 
-
-class forgotPassword(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    submit = SubmitField('Reset Password')
-
-
 class resetPassword(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=20),
                                                      EqualTo('repeat_password', message='Passwords must match')])
