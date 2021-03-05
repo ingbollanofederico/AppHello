@@ -10153,7 +10153,7 @@ h3 {
     font-size: 1.5rem;
   }
 }
-.portfolio .portfolio-item {
+.portfolio .portfolio-item .tile {
   cursor: pointer;
   position: relative;
   display: block;
