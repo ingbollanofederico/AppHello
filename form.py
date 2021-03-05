@@ -57,11 +57,6 @@ class formSearch(FlaskForm):
 
 
 class formReview(FlaskForm):
-    '''
-      gcapOption = Markup('<i class="rating__icon rating__icon--star fa fa-graduation-cap"></i>')
-      radioStar = RadioField(gcapOption, choices=[('0' , '0star'),('1','1star'),('2','2star'),('3','3star'),('4','4star'),('5' , '5star')])
-      starOption = Markup('<i class="rating__icon rating__icon--star fa fa-graduation-cap"></i>')'''
-
     ReviewTitle = StringField('Review', validators=[DataRequired(), Length(min=5, max=50)])
     Review = TextAreaField('Review', validators=[DataRequired(), Length(min=15, max=500)])
     starRating = RadioField('Star Rating', choices = [1,2,3,4,5,], validators=[DataRequired()])

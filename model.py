@@ -1,6 +1,5 @@
 from app import db
 
-#class User is in App.py
 
 class Permissions (db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -9,6 +8,7 @@ class Permissions (db.Model):
 
     def __repr__(self):
         return "<Role %r>" % self.name
+
 
 class University(db.Model):
     idUniversity = db.Column(db.Integer, primary_key=True)
@@ -32,6 +32,7 @@ class University(db.Model):
     def display (self):
         return "%s" % self.name
 
+
 class Exam (db.Model):
     idExam              = db.Column(db.Integer,primary_key=True)
     idProgram           = db.Column(db.Integer,db.ForeignKey('program.idProgram'), nullable=False)
@@ -49,8 +50,6 @@ class Exam (db.Model):
     def display(self):
         return "%s" % self.exam
 
-
-     #'Corso di laurea - Politecnico di Torino Ing Gest'
 
 class Program (db.Model):
     idProgram           = db.Column(db.Integer,primary_key=True)
@@ -92,6 +91,6 @@ class Review (db.Model):
     def display(self):
         return "%s " % self.review
 
-
+#class User is in App.py
 
 

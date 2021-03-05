@@ -62,136 +62,131 @@
                 </form>
             </div>
         </li>
-  {% if 'logged_in' in session and session['logged_in'] == true %}
 
-        <!-- Nav Item - Messages -->
-        <nav class="topbar">
-        <li class="nav-item dropdown no-arrow mx-1">
-            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class="fas fa-envelope fa-fw"></i>
-                <!-- Counter - Messages -->
-                <span class="badge badge-danger badge-counter">7</span>
-            </a>
-            <!-- Dropdown - Messages -->
-            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                aria-labelledby="messagesDropdown">
-                <h6 class="dropdown-header">
-                    Message Center
-                </h6>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
+        {% if 'logged_in' in session and session['logged_in'] == true %}
 
-                        <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_1.svg') }}"
-                            alt="">
-                        <div class="status-indicator bg-success"></div>
-                    </div>
-                    <div class="font-weight-bold">
-                        <div class="text-truncate">Irene liked your review about Politecnico di Torino</div>
-                        <div class="small text-gray-500">Irene Fowler · 58m</div>
-                    </div>
+            <!-- Nav Item - Messages -->
+            <nav class="topbar">
+            <li class="nav-item dropdown no-arrow mx-1">
+                <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fas fa-envelope fa-fw"></i>
+                    <!-- Counter - Messages -->
+                    <span class="badge badge-danger badge-counter">7</span>
                 </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_2.svg') }}"
-                            alt="">
-                        <div class="status-indicator"></div>
-                    </div>
-                    <div>
-                        <div class="text-truncate">
-                            Leonardo commented on your review about Politecnico di Torino
+                <!-- Dropdown - Messages -->
+                <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                    aria-labelledby="messagesDropdown">
+                    <h6 class="dropdown-header">
+                        Message Center
+                    </h6>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+
+                            <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_1.svg') }}"
+                                alt="">
+                            <div class="status-indicator bg-success"></div>
                         </div>
-                        <div class="small text-gray-500">Leonardo Morris · 1d</div>
-                    </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_3.svg') }}"
-                            alt="">
-                        <div class="status-indicator bg-warning"></div>
-                    </div>
-                    <div>
-                        <div class="text-truncate">
-                            Tommaso commented on your review about Politecnico di Torino
+                        <div class="font-weight-bold">
+                            <div class="text-truncate">Irene liked your review about Politecnico di Torino</div>
+                            <div class="small text-gray-500">Irene Fowler · 58m</div>
                         </div>
-                        <div class="small text-gray-500">Tommaso JP · 2d</div>
-                    </div>
-                </a>
-                <a class="dropdown-item d-flex align-items-center" href="#">
-                    <div class="dropdown-list-image mr-3">
-                        <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
-                            alt="">
-                        <div class="status-indicator bg-success"></div>
-                    </div>
-                    <div>
-                        <div class="text-truncate">Do you enjoy AppHello? Leave a review now!</div>
-                        <div class="small text-gray-500">Odino Brigante · 2w</div>
-                    </div>
-                </a>
-                <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
-            </div>
-        </li>
-
-        </nav>
-        <!-- Nav Item - User Information -->
-        <nav class="topbar">
-        <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="mr-2 d-none d-lg-inline text-gray-600 small"> Howdy {{ session['first name'] }}</span>
-
-                <img class="img-profile rounded-circle"
-                     src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
-                >
-            </a>
-
-
-
-            <!-- Dropdown - User Information -->
-            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile') }}">
-                         <i class="fas fa-2x fa-user"></i>
-                        Edit Profile
                     </a>
-                </a>
-
-                <div class="dropdown-divider"></div>
-
-                <a class="dropdown-item" href="#">
-                    <a class="nav-link" href="{{ url_for('editProfile') }}">
-                         <i class="fas fa-2x fa-cogs"></i>
-                        My Reviews
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_2.svg') }}"
+                                alt="">
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div>
+                            <div class="text-truncate">
+                                Leonardo commented on your review about Politecnico di Torino
+                            </div>
+                            <div class="small text-gray-500">Leonardo Morris · 1d</div>
+                        </div>
                     </a>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="{{ url_for('static',filename='img/undraw_profile_3.svg') }}"
+                                alt="">
+                            <div class="status-indicator bg-warning"></div>
+                        </div>
+                        <div>
+                            <div class="text-truncate">
+                                Tommaso commented on your review about Politecnico di Torino
+                            </div>
+                            <div class="small text-gray-500">Tommaso JP · 2d</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item d-flex align-items-center" href="#">
+                        <div class="dropdown-list-image mr-3">
+                            <img class="rounded-circle" src="https://source.unsplash.com/Mv9hjnEUHR4/60x60"
+                                alt="">
+                            <div class="status-indicator bg-success"></div>
+                        </div>
+                        <div>
+                            <div class="text-truncate">Do you enjoy AppHello? Leave a review now!</div>
+                            <div class="small text-gray-500">Odino Brigante · 2w</div>
+                        </div>
+                    </a>
+                    <a class="dropdown-item text-center small text-gray-500" href="#">Read More Messages</a>
+                </div>
+            </li>
+
+            </nav>
+            <!-- Nav Item - User Information -->
+            <nav class="topbar">
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small"> Howdy {{ session['first name'] }}</span>
+
+                    <img class="img-profile rounded-circle"
+                         src="{{ url_for('static',filename='img/undraw_profile.svg') }}"
+                    >
                 </a>
 
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                         <a class="nav-link" href="{{ url_for('logout') }}">
-                         <i class="fas fa-2x fa-sign-out-alt"></i>
-                           Log Out
-                         </a>
-                </a>
 
-            </div>
-        </li>
-        </nav>
-  {% else %}
-      <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
-  {% endif %}
+
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="#">
+                        <a class="nav-link" href="{{ url_for('editProfile') }}">
+                             <i class="fas fa-2x fa-user"></i>
+                            Edit Profile
+                        </a>
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a class="dropdown-item" href="#">
+                        <a class="nav-link" href="{{ url_for('editProfile') }}">
+                             <i class="fas fa-2x fa-cogs"></i>
+                            My Reviews
+                        </a>
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                             <a class="nav-link" href="{{ url_for('logout') }}">
+                             <i class="fas fa-2x fa-sign-out-alt"></i>
+                               Log Out
+                             </a>
+                    </a>
+
+                </div>
+            </li>
+            </nav>
+        {% else %}
+             <span class="mr-2 d-none d-lg-inline text-gray-600 small"><a class="nav-link" href="{{ url_for('login') }}"> Please Log In</a></span>
+        {% endif %}
     </ul>
-
 </nav>
 <!-- End of Topbar -->
 
 
 <div class="container imi-joingform">
-
-
-  <!-- Start Header -->
-
   <div class="imc-jfheader">
-
 
      <!-- Result Page - Information regarding the choice made -->
      <div>
@@ -436,46 +431,6 @@
                                     </div>
 
                                      <!-- End row -->
-
-
- <!-- Start row // This was supposed to be the star rating with Flask Form. Since Flask Form is not able to render the html needed,
-                    I am passing the rate as a separate variable in the url for. Leaving my attepts here for reference.
-
-                                    <div class="row">
-
-                                        <div class="col-lg-4">
-                                            <div class="">
-                                                <div class="form-group">
-                                                    <div class="col-md-12">
-                                                        <div id="full-stars-example-two">
-                                                            <div class="rating-group">
-                                                                { % for subfield in reviewForm.radioStar %}
-                                                                { { subfield() }}
-                                                                    <i class="rating__icon rating__icon--star fa fa-graduation-cap"></i>
-                                                                { % endfor %}
-                                                                <br>
-                                                                <input disabled checked class="rating__input rating__input--none" name="rating3" id="rating3-none" value="0" type="radio">
-                                                                <label aria-label="1 star" class="rating__label" for="rating3-1"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-1" value="1" type="radio">
-                                                                <label aria-label="2 stars" class="rating__label" for="rating3-2"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-2" value="2" type="radio">
-                                                                <label aria-label="3 stars" class="rating__label" for="rating3-3"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-3" value="3" type="radio">
-                                                                <label aria-label="4 stars" class="rating__label" for="rating3-4"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-4" value="4" type="radio">
-                                                                <label aria-label="5 stars" class="rating__label" for="rating3-5"><i class="rating__icon rating__icon--star fa fa-star"></i></label>
-                                                                <input class="rating__input" name="rating3" id="rating3-5" value="5" type="radio">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                      End row -->
-
-
 
                                     <!-- Start  row -->
 
